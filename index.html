@@ -112,7 +112,7 @@ input[type=date],input[type=url]{width:100%;min-height:44px;padding:0 12px;borde
 <div id="app"></div>
 <script>
 const $=s=>document.querySelector(s), g=id=>document.getElementById(id);
-const FBH={st:'loading',err:'',warn:'',why:'',stage:'Firebase wird geladen',email:'',cols:null,push(){},login:null,logout:null,
+const FBH={st:'loading',err:'',warn:'',why:'',stage:'Firebase wird geladen',logs:[],log(t){FBH.logs.push(t);if(FBH.logs.length>14)FBH.logs.shift()},email:'',cols:null,push(){},login:null,logout:null,
  getShared(){const o={};Object.keys(S).forEach(k=>{if(!['user','season','anim'].includes(k))o[k]=S[k]});return JSON.parse(JSON.stringify(o))},
  setShared(d){Object.keys(S).forEach(k=>{if(!['user','season','anim'].includes(k)&&!(k in d))delete S[k]});Object.assign(S,d);S.tickets=S.tickets||{fabi:'',gigi:''}},
  persistS(){try{localStorage.setItem('jw',JSON.stringify(S))}catch(e){}},
@@ -392,7 +392,7 @@ function bindG(h){
 function authMsg(c){return({'auth/invalid-credential':'E-Mail oder Passwort stimmt nicht.','auth/wrong-password':'E-Mail oder Passwort stimmt nicht.','auth/user-not-found':'E-Mail oder Passwort stimmt nicht.','auth/invalid-email':'Die E-Mail-Adresse ist ungültig.','auth/too-many-requests':'Zu viele Versuche. Bitte warte kurz und versuche es erneut.','auth/network-request-failed':'Keine Verbindung. Prüfe dein Internet.','auth/operation-not-allowed':'E-Mail/Passwort ist in Firebase noch nicht aktiviert.','auth/unauthorized-domain':'Diese Adresse ist in Firebase noch nicht als autorisierte Domain eingetragen.'})[c]||'Anmeldung fehlgeschlagen'+(c?' ('+c+')':'')+'.'}
 function gateV(){
  if(FBH.st==='login')return `<div class="wrap"><h1>Jurassic Wood</h1><p class="sub">Melde dich an, um eure gemeinsamen Daten zu sehen.</p><section class="card"><label for="le">E-Mail</label><input id="le" type="email" autocomplete="username" inputmode="email"><label for="lp">Passwort</label><input id="lp" type="password" autocomplete="current-password"><p class="sub" id="lm" role="alert">${esc(FBH.err)}</p><button class="btn" id="lb" style="width:100%;margin-top:8px">Anmelden</button></section></div>`;
- return `<div class="wrap"><h1>Jurassic Wood</h1><p class="sub" role="status">${FBH.err?esc(FBH.err):'Verbinde …'}</p>${FBH.err?'':`<p class="sub">${esc(FBH.stage)}</p>`}${FBH.err?'<div class="row"><button class="btn" id="lr">Erneut versuchen</button><button class="btn ghost" id="lq">Abmelden</button></div>':''}</div>`}
+ return `<div class="wrap"><h1>Jurassic Wood</h1><p class="sub" role="status">${FBH.err?esc(FBH.err):'Verbinde …'}</p>${FBH.err?'':`<p class="sub">${esc(FBH.stage)}</p>`}${FBH.err?'<div class="row"><button class="btn" id="lr">Erneut versuchen</button><button class="btn ghost" id="lq">Abmelden</button></div>'+(FBH.logs.length?'<p class="sub" style="font-size:12px;margin-top:16px">Zuletzt gemeldet:<br>'+FBH.logs.map(esc).join('<br>')+'</p>':''):''}</div>`}
 function bindGate(){
  const b=g('lb');
  if(b){const go=async()=>{const e=g('le').value.trim(),p=g('lp').value;if(!e||!p){g('lm').textContent='Bitte E-Mail und Passwort eingeben.';return}b.disabled=true;g('lm').textContent='';try{await FBH.login(e,p)}catch(x){FBH.err=authMsg(x&&x.code);b.disabled=false;g('lm').textContent=FBH.err}};b.onclick=go;g('lp').onkeydown=ev=>{if(ev.key==='Enter')go()}}
@@ -431,7 +431,8 @@ function startSync(FS,db,H,onState){
  let all=false,stopped=false;
  NAMES.forEach(n=>{last[n]={}});
  const code=e=>e&&e.code?' ('+e.code+')':'';
- const failL=e=>{if(stopped)return;H.err=e&&e.code==='permission-denied'?'Keine Berechtigung auf die Datenbank. Prüfe die Firestore-Regeln und ob dein Konto freigegeben ist.':'Verbindung zu Firebase fehlgeschlagen'+code(e)+'.';onState('error')};
+ const lg=t=>{if(H.log)H.log(t)};
+ const failL=e=>{if(stopped)return;lg('Fehler: '+(e&&e.code||e));H.err=e&&e.code==='permission-denied'?'Keine Berechtigung auf die Datenbank. Prüfe die Firestore-Regeln und ob dein Konto freigegeben ist.':'Verbindung zu Firebase fehlgeschlagen'+code(e)+'.';onState('error')};
  const failW=e=>{H.warn=e&&e.code==='permission-denied'?'Änderungen konnten nicht gespeichert werden: keine Berechtigung (Firestore-Regeln).':'Änderungen konnten nicht synchronisiert werden'+code(e)+'.';if(all)H.soft()};
  const changed=()=>{if(!all)return;H.persistS();H.soft()};
  function applyShared(d){const c=canon(d);last.shared=c;if(c!==canon(H.getShared())){H.setShared(d);changed()}}
@@ -455,6 +456,7 @@ function startSync(FS,db,H,onState){
  const check=()=>{if(all||stopped)return;if(!ready.shared||!NAMES.every(n=>ready[n]))return;all=true;H.persistS();H.clearCols();onState('in');doPush()};
  unsubs.push(FS.onSnapshot(FS.doc(db,'shared','main'),snap=>{
   if(stopped)return;
+  lg('shared: '+(snap.exists()?'vorhanden':'leer')+(snap.metadata.fromCache?' (Cache)':' (Server)'));
   if(!ready.shared){
    if(snap.exists()||!snap.metadata.fromCache){ready.shared=true;if(snap.exists())applyShared(snap.data());check()}
    return}
@@ -462,6 +464,7 @@ function startSync(FS,db,H,onState){
  NAMES.forEach(n=>unsubs.push(FS.onSnapshot(FS.collection(db,n),snap=>{
   if(stopped)return;
   const remote=[];snap.forEach(d=>{const x=d.data();if(x&&x.id)remote.push(x)});
+  lg(n+': '+remote.length+(snap.metadata.fromCache?' (Cache)':' (Server)'));
   if(!ready[n]){
    if(!snap.empty||!snap.metadata.fromCache){
     ready[n]=true;
@@ -485,7 +488,7 @@ function startSync(FS,db,H,onState){
  const wd=setTimeout(()=>{if(FBH.st==='loading'){FBH.err='Der Anmeldestatus konnte nicht geprüft werden. Lade die Seite neu oder öffne sie direkt in Safari bzw. Chrome.';FBH.st='sync';render()}},10000);
  let t2=null;
  const app=A.initializeApp(CFG),auth=AU.getAuth(app);
- let db;try{db=FS.initializeFirestore(app,{localCache:FS.persistentLocalCache({tabManager:FS.persistentMultipleTabManager()}),experimentalAutoDetectLongPolling:true})}catch(e){db=FS.getFirestore(app)}
+ let db;try{db=FS.initializeFirestore(app,{experimentalForceLongPolling:true})}catch(e){db=FS.getFirestore(app)}
  let sync=null;
  FBH.login=(e,p)=>AU.signInWithEmailAndPassword(auth,e,p);
  FBH.logout=async()=>{if(sync){sync.stop();sync=null}try{await AU.signOut(auth)}catch(e){}try{FBH.clearCols();const s=JSON.parse(localStorage.getItem('jw')||'{}'),k={};['user','season','anim'].forEach(x=>{if(x in s)k[x]=s[x]});localStorage.setItem('jw',JSON.stringify(k))}catch(e){}location.reload()};
