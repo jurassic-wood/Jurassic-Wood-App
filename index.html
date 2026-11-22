@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de" data-season="autumn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jurassic Wood</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Nunito:wght@400;700&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html[data-season=autumn]{--bg:#1F2A22;--card:#2B3A2F;--line:#44574A;--tx:#F3EBDD;--sub:#B9C4B5;--ac:#E0A458;--ink:#1F2A22}
+html[data-season=winter]{--bg:#141B2D;--card:#1E2840;--line:#34456B;--tx:#EEF3FB;--sub:#A9B6CF;--ac:#8EC5FF;--ink:#141B2D}
+html[data-season=spring]{--bg:#F3F7EC;--card:#FFFFFF;--line:#D5E3C4;--tx:#26331F;--sub:#55664A;--ac:#3F7A30;--ink:#FFFFFF}
+html[data-season=summer]{--bg:#FFF8E6;--card:#FFFFFF;--line:#F0DFAE;--tx:#33290F;--sub:#6B5B2A;--ac:#A85A0C;--ink:#FFFFFF}
+html,body{margin:0;background:var(--bg);color:var(--tx);transition:background .4s}
+body{font-family:'Nunito',system-ui,sans-serif;font-size:16px;min-height:100vh}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.wrap{max-width:520px;margin:0 auto;padding:24px 20px 110px;position:relative;z-index:1}
+h1{font:600 30px 'Fraunces',Georgia,serif;margin:0;color:var(--ac)}
+h2{font:600 20px 'Fraunces',Georgia,serif;margin:0 0 10px}
+.sub{color:var(--sub);font-size:14px;margin:4px 0}
+.top{display:flex;justify-content:space-between;align-items:center}
+.ic{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--tx);display:grid;place-items:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:16px 0}
+.row{display:flex;align-items:center;gap:14px}
+.row .btn{margin-left:auto}
+.av{display:grid;place-items:center;flex:none;border-radius:50%;color:#1F2A22;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:flex;flex-direction:column;justify-content:space-between;min-height:150px;padding:16px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--tx);text-decoration:none}
+.tile svg{color:var(--ac)}
+.tile b{display:block;font:600 19px 'Fraunces',Georgia,serif}
+.tile small{display:block;font-size:13px;color:var(--sub)}
+.tile.off{grid-column:span 2;min-height:84px;flex-direction:row;align-items:center;gap:14px;opacity:.75}
+.pick{display:grid;gap:12px;margin:20px 0}
+.pick button{display:flex;align-items:center;gap:14px;text-align:left;min-height:72px;padding:12px 16px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;font-size:18px;cursor:pointer}
+.btn{min-height:44px;padding:0 18px;border-radius:999px;border:0;background:var(--ac);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
+.back{display:inline-flex;align-items:center;min-height:44px;color:var(--ac);text-decoration:none;font-weight:700}
+label{display:block;font-size:14px;color:var(--sub);margin:12px 0 6px}
+select,input[type=number]{width:100%;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
+.chk{display:flex;align-items:center;gap:10px;color:var(--tx);font-size:16px;min-height:44px}
+.chk input{width:22px;height:22px;accent-color:var(--ac)}
+ul{margin:0;padding-left:20px;line-height:1.7}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:2}
+.nav a{flex:1;min-height:56px;display:grid;place-items:center;font-size:13px;color:var(--sub);text-decoration:none}
+.nav a[aria-current]{color:var(--ac);font-weight:700}
+.deco{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.p{position:absolute;top:-30px;animation:fall linear infinite}
+.p.autumn{border-radius:0 100% 0 100%}
+.p.winter{border-radius:50%;opacity:.8}
+.p.spring{border-radius:50% 0 50% 0;opacity:.9}
+.p.summer{border-radius:50%;opacity:.7;top:auto;bottom:-20px;animation-name:rise}
+@keyframes fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot))}}
+@keyframes rise{to{transform:translate3d(var(--dx),-110vh,0)}}
+</style>
+</head>
+<body>
+<div class="deco" id="deco" aria-hidden="true"></div>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s), g=id=>document.getElementById(id);
+let S={user:null,season:'auto',anim:!matchMedia('(prefers-reduced-motion: reduce)').matches,tickets:{fabi:'',gigi:''}};
+try{Object.assign(S,JSON.parse(localStorage.getItem('jw')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('jw',JSON.stringify(S))}catch(e){}};
+const P={fabi:{n:'Fabi',r:'Dino',c:'#7FA36B'},gigi:{n:'Gigi',r:'Eichhörnchen',c:'#D98C5F'}};
+const SE={autumn:'Herbst',winter:'Winter',spring:'Frühling',summer:'Sommer'};
+const auto=()=>{const m=new Date().getMonth();return m>=2&&m<=4?'spring':m>=5&&m<=7?'summer':m>=8&&m<=10?'autumn':'winter'};
+const cur=()=>S.season==='auto'?auto():S.season;
+const I={house:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',pot:'<path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM8 6c0-2 2-2 2-4M14 6c0-2 2-2 2-4"/>',train:'<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8 21l2-4M16 21l-2-4"/>',dice:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01" stroke-width="2.5"/>',sport:'<path d="M6 8v8M3 10v4M18 8v8M21 10v4M6 12h12"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
+const svg=(k,s=28)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
+// Platzhalter-Avatar: später durch die Bilder von Dino und Eichhörnchen ersetzen
+const av=(k,s=44)=>`<span class="av" style="width:${s}px;height:${s}px;background:${P[k].c};font-size:${s/2.3|0}px" aria-hidden="true">${P[k].n[0]}</span>`;
+const M={
+ haushalt:['Haushalt','Aufgaben','house',['Aufgaben mit Serien und Intervallen','Status und Punkte pro Person','Tausch-Angebote']],
+ rezepte:['Rezepte','Wochenplan und Einkauf','pot',['Lieblingsrezepte mit Zutaten','Drei bis fünf Rezepte pro Woche wählen','Vorhandene Zutaten abhaken','Einkaufsliste nach Kategorien']],
+ reisen:['Reisen','Planung und Freitickets','train',['Reisen anlegen mit Planungs-To-dos','Gebuchte Zugtickets und Hotels','Bahn-Freitickets pro Person und Jahr']],
+ spiele:['Spiele','Brettspiele-Archiv','dice',['Spielesammlung gemeinsam verwalten']]};
+const note='<p class="sub">Entwurf: Die Daten bleiben vorerst nur auf diesem Gerät. Firebase und der echte Login kommen im nächsten Schritt.</p>';
+
+function picker(){return `<div class="wrap"><h1>Jurassic Wood</h1><p class="sub">Wer bist du?</p><div class="pick">${Object.keys(P).map(k=>`<button data-u="${k}">${av(k,48)}<span><b>${P[k].n}</b><br><small class="sub">${P[k].r}</small></span></button>`).join('')}</div>${note}</div>`}
+function home(){const u=S.user;return `<div class="wrap"><header class="top"><h1>Jurassic Wood</h1><a class="ic" href="#einstellungen" aria-label="Einstellungen">${svg('cog',22)}</a></header>
+<section class="card row">${av(u,52)}<div><b>Hallo, ${P[u].n}</b><div class="sub">${P[u].r}</div></div></section>
+<div class="grid">${Object.keys(M).map(k=>`<a class="tile" href="#${k}">${svg(M[k][2])}<span><b>${M[k][0]}</b><small>${M[k][1]}</small></span></a>`).join('')}<div class="tile off">${svg('sport')}<span><b>Sport</b><small>Kommt später</small></span></div></div></div>`}
+function module(k){const m=M[k];return `<div class="wrap"><a class="back" href="#start">← Start</a><h1>${m[0]}</h1><p class="sub">${m[1]}</p><section class="card"><h2>Geplant</h2><ul>${m[3].map(t=>`<li>${t}</li>`).join('')}</ul></section><p class="sub">Dieses Modul bauen wir als Nächstes aus.</p></div>`}
+function settings(){const u=S.user;return `<div class="wrap"><a class="back" href="#start">← Start</a><h1>Profil und Einstellungen</h1>
+<section class="card"><div class="row">${av(u,52)}<div><b>${P[u].n}</b><div class="sub">${P[u].r}</div></div><button class="btn ghost" id="sw">Wechseln</button></div></section>
+<section class="card"><h2>Aussehen</h2><label for="se">Jahreszeit</label><select id="se">${['auto',...Object.keys(SE)].map(k=>`<option value="${k}"${S.season===k?' selected':''}>${k==='auto'?'Automatisch':SE[k]}</option>`).join('')}</select><p class="sub" id="seh"></p><label class="chk"><input type="checkbox" id="an"${S.anim?' checked':''}> Animationen anzeigen</label></section>
+<section class="card"><h2>Bahn-Freitickets</h2><label for="ft">Freitickets pro Jahr (${P[u].n})</label><input id="ft" type="number" min="0" inputmode="numeric" value="${Number(S.tickets[u])||''}"><p class="sub">Fabi und Gigi haben jeweils ein eigenes Kontingent.</p></section>${note}</div>`}
+function nav(h){const it=[['start','Start'],['haushalt','Haushalt'],['rezepte','Rezepte'],['reisen','Reisen'],['einstellungen','Profil']],ks=it.map(i=>i[0]);
+ return `<nav class="nav" aria-label="Hauptmenü">${it.map(([k,t])=>`<a href="#${k}"${(h===k||(k==='start'&&!ks.includes(h)))?' aria-current="page"':''}>${t}</a>`).join('')}</nav>`}
+
+function deco(){const d=$('#deco');d.innerHTML='';if(!S.anim)return;const se=cur(),
+ cols={autumn:['#E0A458','#D98C5F','#C96F3B'],winter:['#FFFFFF','#DCEBFF'],spring:['#F4B6C8','#CFE6A8'],summer:['#F2B53B','#FFE08A']}[se];
+ for(let i=0;i<16;i++){const e=document.createElement('span'),s=6+Math.random()*10;e.className='p '+se;
+  e.style.cssText=`left:${Math.random()*100}%;width:${s}px;height:${s}px;background:${cols[i%cols.length]};animation-duration:${9+Math.random()*10}s;animation-delay:-${Math.random()*12}s;--dx:${(Math.random()*80-40)|0}px;--rot:${(Math.random()*360)|0}deg`;d.appendChild(e)}}
+function theme(){document.documentElement.dataset.season=cur();deco()}
+function hint(){const e=g('seh');if(e)e.textContent=S.season==='auto'?`Wechselt automatisch mit dem Datum, gerade: ${SE[auto()]}.`:`Fest eingestellt: ${SE[S.season]}.`}
+function render(){const h=location.hash.slice(1)||'start';theme();
+ const v=!S.user?picker():M[h]?module(h):h==='einstellungen'?settings():home();
+ $('#app').innerHTML=v+(S.user?nav(h):'');
+ document.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{S.user=b.dataset.u;save();location.hash='start';render()});
+ if(g('sw'))g('sw').onclick=()=>{S.user=null;save();render()};
+ if(g('se'))g('se').onchange=e=>{S.season=e.target.value;save();theme();hint()};
+ if(g('an'))g('an').onchange=e=>{S.anim=e.target.checked;save();deco()};
+ if(g('ft'))g('ft').oninput=e=>{S.tickets[S.user]=e.target.value;save()};
+ hint()}
+addEventListener('hashchange',()=>{render();scrollTo(0,0)});
+render();
+</script>
+</body>
+</html>
