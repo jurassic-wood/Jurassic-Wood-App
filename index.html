@@ -49,7 +49,7 @@ ul{margin:0;padding-left:20px;line-height:1.7}
 .tabs a{flex:1;min-height:44px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--line);color:var(--tx);text-decoration:none}
 .tabs a[aria-current]{background:var(--ac);border-color:var(--ac);color:var(--ink);font-weight:700}
 a.btn{display:flex;align-items:center;justify-content:center;text-decoration:none}
-input[type=text],input[type=search],textarea{width:100%;min-height:44px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
+input[type=text],input[type=search],input[type=email],input[type=password],textarea{width:100%;min-height:44px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
 input[type=file]{width:100%;color:var(--sub)}
 .chk{margin:0}
 .chk input:checked+span{text-decoration:line-through;color:var(--sub)}
@@ -76,6 +76,27 @@ input[type=file]{width:100%;color:var(--sub)}
 .qty button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:20px}
 .qty input{width:54px;min-height:44px;padding:0 4px;text-align:center}
 .qty small{width:26px}
+input[type=date],input[type=url]{width:100%;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
+.tabs.s{flex-wrap:wrap}.tabs.s a{flex:1 1 30%;font-size:14px}
+.hc{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:10px 0;overflow:hidden}
+.hc.done,.hc.cancelled{opacity:.7}
+.hd{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 14px;background:transparent;border:0;color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+.hb{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--ac);display:grid;place-items:center;font-weight:700;color:var(--ink)}
+.hc.done .hb{background:var(--ac)}.hc.absent .hb{border-color:#D98C5F}.hc.cancelled .hb{border-color:#C0504D}
+.ht b{display:block}.ht small{color:var(--sub)}.hc.done .ht b{text-decoration:line-through}
+.hs{display:flex;gap:8px;padding:0 14px 12px}
+.hs button{flex:1;min-height:44px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--tx);font:inherit;font-size:13px}
+.hs button[aria-pressed=true]{background:var(--ac);color:var(--ink);border-color:var(--ac)}
+.nv{display:flex;align-items:center;gap:8px;margin:12px 0}.nv b{flex:1;text-align:center}
+.nv button{min-width:44px;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit}
+.hh{display:flex;align-items:center;gap:10px;margin:20px 0 4px}.hh h2{margin:0}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:var(--sub);margin:2px 4px 2px 0}
+.warn{border:1px solid #D98C5F;background:var(--card);border-radius:16px;padding:12px 14px;margin:12px 0}
+.big{font:600 38px 'Fraunces',Georgia,serif;color:var(--ac)}
+.wheel{display:block;margin:12px auto;width:min(100%,320px)}
+.wheel .rot{transform-origin:150px 150px}
+.thumb{width:64px;height:64px;border-radius:12px;object-fit:cover;flex:none;background:var(--line)}
+.tl{color:var(--ac)}
 .deco{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .p{position:absolute;top:-30px;animation:fall linear infinite}
 .p.autumn{border-radius:0 100% 0 100%}
@@ -91,9 +112,14 @@ input[type=file]{width:100%;color:var(--sub)}
 <div id="app"></div>
 <script>
 const $=s=>document.querySelector(s), g=id=>document.getElementById(id);
+const FBH={st:'loading',err:'',warn:'',why:'',email:'',cols:null,push(){},login:null,logout:null,
+ getShared(){const o={};Object.keys(S).forEach(k=>{if(!['user','season','anim'].includes(k))o[k]=S[k]});return JSON.parse(JSON.stringify(o))},
+ setShared(d){Object.keys(S).forEach(k=>{if(!['user','season','anim'].includes(k)&&!(k in d))delete S[k]});Object.assign(S,d);S.tickets=S.tickets||{fabi:'',gigi:''}},
+ persistS(){try{localStorage.setItem('jw',JSON.stringify(S))}catch(e){}},
+ clearCols(){try{localStorage.removeItem('jw-r');localStorage.removeItem('jw-g')}catch(e){}}};
 let S={user:null,season:'auto',anim:!matchMedia('(prefers-reduced-motion: reduce)').matches,tickets:{fabi:'',gigi:''}};
 try{Object.assign(S,JSON.parse(localStorage.getItem('jw')||'{}'))}catch(e){}
-const save=()=>{try{localStorage.setItem('jw',JSON.stringify(S))}catch(e){}};
+const save=()=>{FBH.persistS();FBH.push()};
 const P={fabi:{n:'Fabi',r:'Dino',c:'#7FA36B'},gigi:{n:'Gigi',r:'Eichhörnchen',c:'#D98C5F'}};
 const SE={autumn:'Herbst',winter:'Winter',spring:'Frühling',summer:'Sommer'};
 const auto=()=>{const m=new Date().getMonth();return m>=2&&m<=4?'spring':m>=5&&m<=7?'summer':m>=8&&m<=10?'autumn':'winter'};
@@ -107,7 +133,7 @@ const M={
  rezepte:['Rezepte','Wochenplan und Einkauf','pot',['Lieblingsrezepte mit Zutaten','Drei bis fünf Rezepte pro Woche wählen','Vorhandene Zutaten abhaken','Einkaufsliste nach Kategorien']],
  reisen:['Reisen','Planung und Freitickets','train',['Reisen anlegen mit Planungs-To-dos','Gebuchte Zugtickets und Hotels','Bahn-Freitickets pro Person und Jahr']],
  spiele:['Spiele','Brettspiele-Archiv','dice',['Spielesammlung gemeinsam verwalten']]};
-const note='<p class="sub">Entwurf: Die Daten bleiben vorerst nur auf diesem Gerät. Firebase und der echte Login kommen im nächsten Schritt.</p>';
+let note='<p class="sub">Entwurf: Die Daten bleiben vorerst nur auf diesem Gerät. Firebase und der echte Login kommen im nächsten Schritt.</p>';
 
 function picker(){return `<div class="wrap"><h1>Jurassic Wood</h1><p class="sub">Wer bist du?</p><div class="pick">${Object.keys(P).map(k=>`<button data-u="${k}">${av(k,48)}<span><b>${P[k].n}</b><br><small class="sub">${P[k].r}</small></span></button>`).join('')}</div>${note}</div>`}
 function home(){const u=S.user;return `<div class="wrap"><header class="top"><h1>Jurassic Wood</h1><a class="ic" href="#einstellungen" aria-label="Einstellungen">${svg('cog',22)}</a></header>
@@ -117,14 +143,14 @@ function module(k){const m=M[k];return `<div class="wrap"><a class="back" href="
 function settings(){const u=S.user;return `<div class="wrap"><a class="back" href="#start">← Start</a><h1>Profil und Einstellungen</h1>
 <section class="card"><div class="row">${av(u,52)}<div><b>${P[u].n}</b><div class="sub">${P[u].r}</div></div><button class="btn ghost" id="sw">Wechseln</button></div></section>
 <section class="card"><h2>Aussehen</h2><label for="se">Jahreszeit</label><select id="se">${['auto',...Object.keys(SE)].map(k=>`<option value="${k}"${S.season===k?' selected':''}>${k==='auto'?'Automatisch':SE[k]}</option>`).join('')}</select><p class="sub" id="seh"></p><label class="chk"><input type="checkbox" id="an"${S.anim?' checked':''}> Animationen anzeigen</label></section>
-<section class="card"><h2>Bahn-Freitickets</h2><label for="ft">Freitickets pro Jahr (${P[u].n})</label><input id="ft" type="number" min="0" inputmode="numeric" value="${Number(S.tickets[u])||''}"><p class="sub">Fabi und Gigi haben jeweils ein eigenes Kontingent.</p></section>${note}</div>`}
-function nav(h){const it=[['start','Start'],['haushalt','Haushalt'],['rezepte','Rezepte'],['reisen','Reisen'],['einstellungen','Profil']],ks=it.map(i=>i[0]);
+<section class="card"><h2>Bahn-Freitickets</h2><label for="ft">Freitickets pro Jahr (${P[u].n})</label><input id="ft" type="number" min="0" inputmode="numeric" value="${Number(S.tickets[u])||''}"><p class="sub">Fabi und Gigi haben jeweils ein eigenes Kontingent.</p></section>${FBH.st==='in'?`<section class="card"><h2>Konto</h2><p class="sub">Angemeldet als ${esc(FBH.email)}.</p><button class="btn ghost" id="lo">Abmelden</button></section>`:''}${note}</div>`}
+function nav(h){const it=[['start','Start'],['haushalt','Haushalt'],['rezepte','Rezepte'],['reisen','Reisen'],['spiele','Spiele'],['einstellungen','Profil']],ks=it.map(i=>i[0]);
  return `<nav class="nav" aria-label="Hauptmenü">${it.map(([k,t])=>`<a href="#${k}"${(h===k||(k==='start'&&!ks.includes(h)))?' aria-current="page"':''}>${t}</a>`).join('')}</nav>`}
 
 /* ---- Rezepte und Einkauf ---- */
 const U=['Stk','g','kg','ml','l','EL','TL','Pck'],CATS=['Obst und Gemüse','Milchprodukte','Fleisch und Fisch','Backwaren','Vorrat','Tiefgekühlt','Gewürze','Getränke','Sonstiges'];
 let SEL=[],ZI=[],R=[];try{R=JSON.parse(localStorage.getItem('jw-r')||'[]')}catch(e){}
-const saveR=()=>{try{localStorage.setItem('jw-r',JSON.stringify(R));return true}catch(e){return false}};
+const saveR=()=>{if(FBH.st!=='in'){try{localStorage.setItem('jw-r',JSON.stringify(R))}catch(e){return false}}FBH.push();return true};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const isR=h=>h==='rezepte'||h==='einkauf'||h==='neu'||h==='zutaten'||/^(r|edit)-/.test(h);
@@ -198,6 +224,183 @@ function bindR(h){const m=h.match(/^(r|edit)-(.+)$/),r=m&&R.find(x=>x.id===m[2])
   location.hash='r-'+rec.id};
 }
 
+/* ---- Haushalt ---- */
+const $$=s=>[...document.querySelectorAll(s)],DN=['So','Mo','Di','Mi','Do','Fr','Sa'],DAYS={fabi:[1,2],gigi:[4,5],we:[6,0]};
+const IV={w4:'4× pro Woche',w2:'2× pro Woche',w1:'1× pro Woche',w2w:'Alle zwei Wochen',m1:'1× pro Monat'},OW={both:'Beide',fabi:'Nur Fabi',gigi:'Nur Gigi',alt:'Abwechselnd'};
+const MN=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+let HW=0,HM=0,HOC={};
+const isH=h=>h==='haushalt'||/^h-/.test(h);
+const T=()=>S.tasks=S.tasks||[],LG=()=>S.log=S.log||[],OV=()=>S.ov=S.ov||{},SW=()=>S.swaps=S.swaps||[];
+const dstr=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const addD=(d,n)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x};
+const monOf=d=>addD(d,-((d.getDay()+6)%7));
+const isoW=d=>{const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())),n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y)/864e5+1)/7)};
+const fmt=d=>String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.';
+const sole=t=>t.owner==='fabi'||t.owner==='gigi'?t.owner:null;
+function occs(ws){const wk=dstr(ws),nr=isoW(ws),o=[];
+ T().forEach(t=>{const so=sole(t),add=(p,slot)=>{const key=[t.id,wk,p,slot].join('|');o.push({key,t,slot,p:OV()[key]||p})};
+  if(t.interval==='w4'){(so?[so]:['fabi','gigi']).forEach(p=>{add(p,'A');add(p,'B')})}
+  else if(t.interval==='w2'){if(so){add(so,'A');add(so,'B')}else['fabi','gigi'].forEach(p=>add(p,'A'))}
+  else if(t.interval==='w1')add(so||(nr%2?'gigi':'fabi'),'W');
+  else if(t.interval==='w2w'&&nr%2===0)add(so||(nr%4===0?'fabi':'gigi'),'W')});
+ return o}
+function moccs(y,m){const k=y+'-'+String(m+1).padStart(2,'0');return T().filter(t=>t.interval==='m1').map(t=>{const p=sole(t)||((y*12+m)%2?'gigi':'fabi'),key=[t.id,k,p,'M'].join('|');return{key,t,slot:'M',p:OV()[key]||p}})}
+const inWin=(o,d)=>o.slot==='A'?DAYS[o.p].includes(d):o.slot==='B'?DAYS.we.includes(d):true;
+const slotL=o=>o.slot==='A'?DAYS[o.p].map(d=>DN[d]).join('/'):o.slot==='B'?'Sa/So':o.slot==='W'?'diese Woche':'dieser Monat';
+const stOf=k=>{const l=LG().find(x=>x.k===k);return l?l.s:''};
+const ptsOf=(t,s)=>s==='done'?+t.points:s==='absent'?(+t.points)/2:0;
+function setSt(k,s){const o=HOC[k];if(!o)return;const L=LG(),i=L.findIndex(x=>x.k===k);if(i>=0&&L[i].s===s)L.splice(i,1);else{if(i>=0)L.splice(i,1);L.push({k,s,p:o.p,pts:ptsOf(o.t,s),at:Date.now(),title:o.t.title})}save();render()}
+function conf(sel,lbl,fn){$$(sel).forEach(b=>{const o=b.textContent;let a=0;b.onclick=()=>{if(a)return fn(b);a=1;b.textContent=lbl;setTimeout(()=>{a=0;b.textContent=o},4000)}})}
+function card(o){HOC[o.key]=o;const s=stOf(o.key),k=esc(o.key),sw=SW().some(x=>x.st==='offen'&&(x.a===o.key||x.b===o.key)),lab={done:'erledigt',absent:'abwesend, halbe Punkte',cancelled:'ausgefallen, keine Punkte'}[s];
+ return `<div class="hc ${s}"><button class="hd" data-hs="done" data-k="${k}" aria-pressed="${s==='done'}"><span class="hb">${s==='done'?'✓':''}</span><span class="ht"><b>${esc(o.t.title)}</b><small>${slotL(o)} · ${o.t.points} Pkt${lab?' · '+lab:''}${sw?' · Tausch angeboten':''}</small></span></button><div class="hs"><button data-hs="absent" data-k="${k}" aria-pressed="${s==='absent'}">Abwesend</button><button data-hs="cancelled" data-k="${k}" aria-pressed="${s==='cancelled'}">Ausgefallen</button></div></div>`}
+const grp=l=>['fabi','gigi'].map(p=>{const a=l.filter(o=>o.p===p);return `<div class="hh">${av(p,32)}<h2>${P[p].n}</h2></div>`+(a.length?a.map(card).join(''):'<p class="sub">Nichts dran.</p>')}).join('');
+const nav2=(k,lbl)=>`<div class="nv"><button data-nv="${k}" data-d="-1" aria-label="Zurück">←</button><b>${lbl}</b><button data-nv="${k}" data-d="1" aria-label="Vor">→</button></div><button class="btn ghost" data-nv="${k}" data-d="0" style="width:100%;margin-bottom:8px">Heute</button>`;
+const HT=[['haushalt','Heute'],['h-woche','Woche'],['h-monat','Monat'],['h-punkte','Punkte'],['h-tausch','Tausch'],['h-verwalten','Verwalten']];
+function hau(h){const sub=h==='haushalt'?'heute':h.slice(2),u=S.user,now=new Date();HOC={};
+ const head=`<div class="wrap"><a class="back" href="#start">← Start</a><h1>Haushalt</h1><div class="tabs s">${HT.map(([k,t])=>`<a href="#${k}"${k===h?' aria-current="page"':''}>${t}</a>`).join('')}</div>`;
+ if(sub==='heute'){const d=now.getDay(),l=[...occs(monOf(now)).filter(o=>o.p===u&&inWin(o,d)),...moccs(now.getFullYear(),now.getMonth()).filter(o=>o.p===u)];
+  return head+`<p class="sub">${DN[d]}, ${fmt(now)} · Aufgaben für ${P[u].n}</p>`+(l.length?l.map(card).join(''):`<p class="sub">${T().length?'Heute ist nichts für dich dran.':'Noch keine Aufgaben. Lege sie unter Verwalten an.'}</p>`)+'</div>'}
+ if(sub==='woche'){const ws=addD(monOf(now),HW*7);return head+nav2('w',`KW ${isoW(ws)} · ${fmt(ws)}–${fmt(addD(ws,6))}`)+grp(occs(ws))+'</div>'}
+ if(sub==='monat'){const d=new Date(now.getFullYear(),now.getMonth()+HM,1);return head+nav2('m',`${MN[d.getMonth()]} ${d.getFullYear()}`)+grp(moccs(d.getFullYear(),d.getMonth()))+'</div>'}
+ if(sub==='punkte'){const t0=S.resetAt||0,sum=p=>rnd(LG().filter(l=>l.p===p&&l.at>=t0).reduce((a,l)=>a+l.pts,0)),ar=(S.archive||[]).slice().reverse(),ld=v=>v?new Date(v).toLocaleDateString('de-DE'):'Beginn';
+  return head+`<div class="grid">${['fabi','gigi'].map(p=>`<div class="card" style="text-align:center;margin:0">${av(p,56)}<div class="big">${sum(p)}</div><div class="sub">${P[p].n}</div></div>`).join('')}</div><p class="sub">Zählt seit ${ld(t0)}</p><button class="btn ghost" id="rs" style="width:100%">Punktestand zurücksetzen</button>`+(ar.length?`<h2 class="cat">Archiv</h2>`+ar.map(x=>`<div class="card"><b>${ld(x.from)} bis ${ld(x.to)}</b><div class="sub">Fabi ${x.fabi} · Gigi ${x.gigi}</div></div>`).join(''):'')+'</div>'}
+ if(sub==='tausch'){const ws=monOf(now),oth=u==='fabi'?'gigi':'fabi',all=occs(ws),mine=all.filter(o=>o.p===u&&!stOf(o.key)),his=all.filter(o=>o.p===oth&&!stOf(o.key)),lb=o=>`${o.t.title} (${slotL(o)})`,op=SW().filter(x=>x.st==='offen'),old=SW().filter(x=>x.st!=='offen').slice(-5).reverse();
+  return head+`<section class="card"><h2>Tausch anbieten</h2>${mine.length?`<label for="sa">Ich gebe ab (diese Woche)</label><select id="sa">${mine.map(o=>`<option value="${esc(o.key)}">${esc(lb(o))}</option>`).join('')}</select><label for="sb">Dafür übernehme ich (optional)</label><select id="sb"><option value="">Nichts, nur abgeben</option>${his.map(o=>`<option value="${esc(o.key)}">${esc(lb(o))}</option>`).join('')}</select><button class="btn" id="so" style="width:100%;margin-top:14px">Angebot senden</button>`:'<p class="sub">Du hast diese Woche nichts Offenes zum Tauschen.</p>'}</section>`
+  +`<h2 class="cat">Offene Angebote</h2>`+(op.length?op.map(x=>`<div class="card"><b>${P[x.from].n} bietet an: ${esc(x.la)}</b><div class="sub">${x.lb?'Dafür: '+esc(x.lb):'Ohne Gegenleistung'}</div><div class="row" style="margin-top:10px">${x.to===u?`<button class="btn" data-sw="yes" data-id="${x.id}">Annehmen</button><button class="btn ghost" data-sw="no" data-id="${x.id}">Ablehnen</button>`:`<button class="btn ghost" data-sw="del" data-id="${x.id}">Zurückziehen</button>`}</div></div>`).join(''):'<p class="sub">Keine offenen Angebote.</p>')
+  +(old.length?`<h2 class="cat">Zuletzt</h2>`+old.map(x=>`<p class="sub">${P[x.from].n}: ${esc(x.la)} · ${x.st}</p>`).join(''):'')+'</div>'}
+ return head+`<section class="card"><h2>Neue Aufgabe</h2><label for="tn">Name</label><input id="tn" type="text"><label for="ti">Rhythmus</label><select id="ti">${Object.entries(IV).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><label for="to">Zuständig</label><select id="to">${Object.entries(OW).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><label for="tp">Punkte</label><input id="tp" type="number" min="0" step="0.5" value="2" inputmode="decimal"><p class="sub" id="tm" role="status"></p><button class="btn" id="ta" style="width:100%">Aufgabe hinzufügen</button></section>`
+  +(T().length?`<h2 class="cat">Alle Aufgaben</h2>`+T().map(t=>`<div class="card row"><div><b>${esc(t.title)}</b><div class="sub">${IV[t.interval]} · ${OW[t.owner]} · ${t.points} Pkt</div></div><button class="btn ghost" data-dt="${t.id}">Löschen</button></div>`).join(''):'<button class="btn ghost" id="ex" style="width:100%">Beispielaufgaben einfügen</button>')+note+'</div>'}
+function bindH(){
+ $$('[data-hs]').forEach(b=>b.onclick=()=>setSt(b.dataset.k,b.dataset.hs));
+ $$('[data-nv]').forEach(b=>b.onclick=()=>{const d=+b.dataset.d;if(b.dataset.nv==='m')HM=d?HM+d:0;else HW=d?HW+d:0;render()});
+ if(g('rs'))two('rs','Wirklich zurücksetzen?',()=>{const t0=S.resetAt||0,sum=p=>rnd(LG().filter(l=>l.p===p&&l.at>=t0).reduce((a,l)=>a+l.pts,0));(S.archive=S.archive||[]).push({from:t0||null,to:Date.now(),fabi:sum('fabi'),gigi:sum('gigi')});S.resetAt=Date.now();save();render()});
+ if(g('ta'))g('ta').onclick=()=>{const n=g('tn').value.trim();if(!n){g('tm').textContent='Bitte gib der Aufgabe einen Namen.';return}T().push({id:uid(),title:n,interval:g('ti').value,owner:g('to').value,points:Math.max(0,+g('tp').value||0)});save();render()};
+ if(g('ex'))g('ex').onclick=()=>{[['Wäsche waschen','w4','both',3],['Staubsaugen','w2','both',2],['Müll rausbringen','w1','alt',1],['Bad putzen','w1','alt',3],['Fenster putzen','w2w','alt',4],['Backofen reinigen','m1','alt',5]].forEach(([title,interval,owner,points])=>T().push({id:uid(),title,interval,owner,points}));save();render()};
+ conf('[data-dt]','Sicher?',b=>{S.tasks=T().filter(t=>t.id!==b.dataset.dt);save();render()});
+ if(g('so'))g('so').onclick=()=>{const a=g('sa'),b=g('sb');SW().push({id:uid(),from:S.user,to:S.user==='fabi'?'gigi':'fabi',a:a.value,b:b.value,la:a.selectedOptions[0].textContent,lb:b.value?b.selectedOptions[0].textContent:'',st:'offen'});save();render()};
+ $$('[data-sw]').forEach(b=>b.onclick=()=>{const x=SW().find(s=>s.id===b.dataset.id),a=b.dataset.sw;if(!x)return;if(a==='yes'){OV()[x.a]=x.to;if(x.b)OV()[x.b]=x.from;x.st='angenommen'}else if(a==='no')x.st='abgelehnt';else S.swaps=SW().filter(s=>s!==x);save();render()});
+}
+/* ---- Reisen und Freitickets ---- */
+const isV=h=>h==='reisen'||/^v-/.test(h);
+const TY={auto:'Auto',zug:'Zug mit gebuchtem Ticket',frei:'Zug mit Freiticket'};
+const TR=()=>S.trips=S.trips||[],FT=()=>S.ft=S.ft||[];
+const quota=p=>Number(S.tickets[p])||({fabi:16,gigi:8})[p];
+const dde=s=>s?new Date(s+'T12:00:00').toLocaleDateString('de-DE'):'';
+const setP=(o,path,v)=>{const a=path.split('.');let x=o;a.slice(0,-1).forEach(k=>x=x[k]);x[a[a.length-1]]=v};
+const safeU=u=>/^https?:\/\//i.test(u||'')?u:'';
+function tripCard(t){const d=t.todos.filter(x=>x.done).length;return `<a class="card" style="display:block;color:inherit;text-decoration:none" href="#v-${t.id}"><b>${esc(t.title)}</b><div class="sub">${esc(t.place||'')}${t.from?' · '+dde(t.from)+(t.to?' bis '+dde(t.to):''):''}</div><div><span class="chip">Anreise ${t.out.ok?'geklärt':'offen'}</span><span class="chip">Abreise ${t.back.ok?'geklärt':'offen'}</span><span class="chip">Unterkunft ${t.stay.ok?'gebucht':'offen'}</span>${t.todos.length?`<span class="chip">To-dos ${d}/${t.todos.length}</span>`:''}</div></a>`}
+function seg(t,key,lab){const x=t[key];return `<section class="card"><h2>${lab}</h2><label for="${key}t">Art</label><select id="${key}t" data-tf="${key}.type">${Object.entries(TY).map(([k,v])=>`<option value="${k}"${x.type===k?' selected':''}>${v}</option>`).join('')}</select><label class="chk"><input type="checkbox" data-tc="${key}.ok"${x.ok?' checked':''}><span>Geklärt</span></label><label for="${key}n">Notiz (Zug, Uhrzeit, Buchung)</label><input id="${key}n" type="text" data-tf="${key}.note" value="${esc(x.note||'')}">${x.type==='frei'?'<p class="sub">Trag das Ticket unter <a class="tl" href="#v-ft">Freitickets</a> ein.</p>':''}</section>`}
+function tripV(t){return `<div class="wrap"><a class="back" href="#reisen">← Reisen</a><h1>${esc(t.title)}</h1>
+<section class="card"><label for="rt">Titel</label><input id="rt" type="text" data-tf="title" value="${esc(t.title)}"><label for="rp">Ort</label><input id="rp" type="text" data-tf="place" value="${esc(t.place||'')}"><label for="rf">Von</label><input id="rf" type="date" data-tf="from" value="${t.from||''}"><label for="rv">Bis</label><input id="rv" type="date" data-tf="to" value="${t.to||''}"><label for="ro">Anlass</label><input id="ro" type="text" data-tf="occasion" value="${esc(t.occasion||'')}"></section>
+${seg(t,'out','Anreise')}${seg(t,'back','Abreise')}
+<section class="card"><h2>Unterkunft</h2><label class="chk"><input type="checkbox" data-tc="stay.ok"${t.stay.ok?' checked':''}><span>Gebucht</span></label><label for="sy">Hotel oder Unterkunft</label><input id="sy" type="text" data-tf="stay.name" value="${esc(t.stay.name||'')}"><label for="sz">Notiz</label><input id="sz" type="text" data-tf="stay.note" value="${esc(t.stay.note||'')}"></section>
+<section class="card"><h2>Sonstiges</h2>${t.todos.map(x=>`<div class="si${x.done?' dn':''}"><input type="checkbox" data-td="${x.id}" aria-label="${esc(x.t)} abhaken"${x.done?' checked':''}><span class="sn">${esc(x.t)}</span><button class="x" data-tx="${x.id}" aria-label="Punkt entfernen">×</button></div>`).join('')}<label for="tdn">Neuer Punkt (z. B. Restaurant reservieren)</label><input id="tdn" type="text"><button class="btn" id="tda" style="width:100%;margin-top:10px">Hinzufügen</button></section>
+<button class="btn ghost" id="trdel" style="width:100%">Reise löschen</button></div>`}
+function ftV(){const L=FT(),now=new Date(),yrs=[...new Set([now.getFullYear(),...L.map(x=>+x.booked.slice(0,4))])].sort(),y=yrs.includes(S.fty)?S.fty:now.getFullYear(),ly=L.filter(x=>x.booked.startsWith(y+'-')),max=Number(S.ftMax)||1,eur=Number(S.ftEur)||50,
+ mo=Array.from({length:12},(_,i)=>{const a=ly.filter(x=>x.booked.slice(5,7)===String(i+1).padStart(2,'0'));return{i,n:a.length,v:a.reduce((s,x)=>s+(+x.value||0),0)}}),over=mo.filter(m=>m.n>max||m.v>eur),tr=id=>TR().find(t=>t.id===id),td=dstr(now);
+ return `<label for="fy">Jahr (nach Buchungsdatum)</label><select id="fy">${yrs.map(v=>`<option${v===y?' selected':''}>${v}</option>`).join('')}</select>
+<div class="grid" style="margin-top:12px">${['fabi','gigi'].map(p=>{const u=ly.filter(x=>x.quota===p).length,q=quota(p);return `<div class="card" style="text-align:center;margin:0">${av(p,48)}<div class="big">${u}/${q}</div><div class="sub">${P[p].n} · ${Math.max(0,q-u)} übrig</div></div>`}).join('')}</div>`
+ +(over.length?`<div class="warn" role="alert"><b>Achtung Freibetrag</b>${over.map(m=>`<div>${MN[m.i]}: ${m.n} Tickets${m.v?', '+rnd(m.v)+' €':''} (Grenze ${max} Ticket${max>1?'s':''} bzw. ${eur} €)</div>`).join('')}</div>`:'')
+ +`<h2 class="cat">Pro Monat</h2>${mo.filter(m=>m.n).map(m=>`<span class="chip">${MN[m.i]}: ${m.n}/${max}${m.v?' · '+rnd(m.v)+' €':''}</span>`).join('')||'<p class="sub">Noch keine Tickets in diesem Jahr.</p>'}`
+ +`<section class="card"><h2>Freiticket eintragen</h2><label for="fb">Gebucht am</label><input id="fb" type="date" value="${td}"><label for="fr">Fahrt am (optional)</label><input id="fr" type="date"><label for="ff">Ticket für</label><select id="ff"><option value="fabi">Fabi</option><option value="gigi">Gigi</option></select><label for="fq">Aus dem Kontingent von</label><select id="fq"><option value="fabi">Fabi</option><option value="gigi">Gigi</option></select><label for="fv">Wert in Euro (optional)</label><input id="fv" type="number" min="0" step="0.01" inputmode="decimal"><label for="fo">Reise (optional)</label><select id="fo"><option value="">Keine</option>${TR().map(t=>`<option value="${t.id}">${esc(t.title)}</option>`).join('')}</select><p class="sub" id="fm" role="status"></p><button class="btn" id="fadd" style="width:100%">Eintragen</button></section>`
+ +(ly.length?`<h2 class="cat">Tickets ${y}</h2>`+ly.slice().sort((a,b)=>a.booked<b.booked?1:-1).map(x=>`<div class="card row"><div><b>${dde(x.booked)} gebucht</b><div class="sub">Fahrt ${dde(x.travel)||'offen'} · für ${P[x.for].n} · Kontingent ${P[x.quota].n}${x.value?' · '+x.value+' €':''}${tr(x.trip)?' · '+esc(tr(x.trip).title):''}</div></div><button class="btn ghost" data-fd="${x.id}">Löschen</button></div>`).join(''):'')
+ +`<section class="card"><h2>Grenzen</h2><label for="fx">Tickets pro Monat (Fabi und Gigi zusammen)</label><input id="fx" type="number" min="1" inputmode="numeric" value="${max}"><label for="fe">Freibetrag pro Monat in Euro</label><input id="fe" type="number" min="0" inputmode="decimal" value="${eur}"><p class="sub">Nur zur Orientierung, keine Steuerberatung. Die genauen Werte und ob das Jahreskontingent nach Buchungsjahr zählt, bitte bei der Bahn prüfen.</p></section>`}
+function rei(h){const tabs=`<div class="tabs"><a href="#reisen"${h!=='v-ft'?' aria-current="page"':''}>Reisen</a><a href="#v-ft"${h==='v-ft'?' aria-current="page"':''}>Freitickets</a></div>`,head=`<div class="wrap"><a class="back" href="#start">← Start</a><h1>Reisen</h1>`+tabs;
+ if(h==='v-ft')return head+ftV()+'</div>';
+ if(h==='v-neu')return `<div class="wrap"><a class="back" href="#reisen">← Abbrechen</a><h1>Neue Reise</h1><section class="card"><label for="rn">Titel (z. B. Wochenende in Köln)</label><input id="rn" type="text"><p class="sub" id="rm" role="status"></p><button class="btn" id="rc" style="width:100%">Reise anlegen</button></section></div>`;
+ const m=h.match(/^v-(.+)$/),t=m&&TR().find(x=>x.id===m[1]);if(t)return tripV(t);
+ const l=TR().slice().sort((a,b)=>(a.from||'9')<(b.from||'9')?-1:1);
+ return head+`<a class="btn" href="#v-neu" style="margin-bottom:12px">+ Neue Reise</a>`+(l.length?l.map(tripCard).join(''):'<p class="sub">Noch keine Reise. Lege die erste an.</p>')+note+'</div>'}
+function bindV(h){
+ if(g('rc'))g('rc').onclick=()=>{const n=g('rn').value.trim();if(!n){g('rm').textContent='Bitte gib einen Titel ein.';return}const t={id:uid(),title:n,place:'',from:'',to:'',occasion:'',out:{type:'zug',ok:false,note:''},back:{type:'zug',ok:false,note:''},stay:{ok:false,name:'',note:''},todos:[]};TR().push(t);save();location.hash='v-'+t.id};
+ const m=h.match(/^v-(.+)$/),t=m&&TR().find(x=>x.id===m[1]);
+ if(t){
+  $$('[data-tf]').forEach(e=>e.onchange=()=>{setP(t,e.dataset.tf,e.value);save();if(e.tagName==='SELECT')render()});
+  $$('[data-tc]').forEach(e=>e.onchange=()=>{setP(t,e.dataset.tc,e.checked);save();render()});
+  $$('[data-td]').forEach(e=>e.onchange=()=>{const x=t.todos.find(z=>z.id===e.dataset.td);x.done=e.checked;save();render()});
+  $$('[data-tx]').forEach(e=>e.onclick=()=>{t.todos=t.todos.filter(z=>z.id!==e.dataset.tx);save();render()});
+  if(g('tda'))g('tda').onclick=()=>{const v=g('tdn').value.trim();if(!v)return;t.todos.push({id:uid(),t:v,done:false});save();render()};
+  two('trdel','Wirklich löschen?',()=>{S.trips=TR().filter(x=>x.id!==t.id);save();location.hash='reisen'})}
+ if(g('fy'))g('fy').onchange=e=>{S.fty=+e.target.value;save();render()};
+ if(g('fx'))g('fx').onchange=e=>{S.ftMax=Math.max(1,+e.target.value||1);save();render()};
+ if(g('fe'))g('fe').onchange=e=>{S.ftEur=Math.max(0,+e.target.value||0);save();render()};
+ if(g('fadd'))g('fadd').onclick=()=>{const b=g('fb').value;if(!b){g('fm').textContent='Bitte gib das Buchungsdatum an.';return}FT().push({id:uid(),booked:b,travel:g('fr').value,for:g('ff').value,quota:g('fq').value,value:+g('fv').value||0,trip:g('fo').value});S.fty=+b.slice(0,4);save();render()};
+ conf('[data-fd]','Sicher?',b=>{S.ft=FT().filter(x=>x.id!==b.dataset.fd);save();render()});
+}
+/* ---- Spiele ---- */
+const isG=h=>h==='spiele'||/^g-/.test(h);
+const CX=['Sehr leicht','Mittel','Schwer','Experte'],MD={koop:'Kooperativ',komp:'Kompetitiv'},DB=[['','Egal'],['30','bis 30 Min'],['60','bis 60 Min'],['90','bis 90 Min'],['120','bis 2 Std'],['999','länger als 2 Std']];
+let GD={games:[],wish:[],amb:[]};try{Object.assign(GD,JSON.parse(localStorage.getItem('jw-g')||'{}'))}catch(e){}
+const saveG=()=>{if(FBH.st!=='in'){try{localStorage.setItem('jw-g',JSON.stringify(GD))}catch(e){return false}}FBH.push();return true};
+const GM=()=>GD.games,WL=()=>GD.wish,AM=()=>GD.amb;
+const F={q:'',p:0,cx:'',d:'',m:''},ZF={p:4,cx:'',d:'',m:''};
+const fits=(x,f)=>(!f.p||(x.pmin<=f.p&&f.p<=x.pmax))&&(f.cx===''||String(x.cx)===f.cx)&&(!f.d||(f.d==='999'?x.dmax>120:x.dmax<=+f.d))&&(!f.m||x.mode===f.m);
+const gmeta=x=>`${x.pmin===x.pmax?x.pmin:x.pmin+'–'+x.pmax} Pers. · ${x.dmin===x.dmax?x.dmin:x.dmin+'–'+x.dmax} Min · ${CX[x.cx]} · ${MD[x.mode]}`;
+const ytT=u=>{const m=(u||'').match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/);return m?`https://img.youtube.com/vi/${m[1]}/mqdefault.jpg`:''};
+const athumb=a=>{const s=a.img||(a.type==='youtube'?ytT(a.url):'');return s?`<img class="thumb" src="${esc(s)}" alt="" onerror="this.style.visibility='hidden'">`:`<span class="thumb" style="display:grid;place-items:center;color:var(--sub)">${svg('dice',28)}</span>`};
+const acard=(a,ed)=>`<div class="card"><div class="row">${athumb(a)}<div><b>${esc(a.name)}</b><div class="sub">${a.type==='spotify'?'Spotify-Playlist':'YouTube-Video'}${ed&&a.games.length?' · '+esc(a.games.map(id=>(GM().find(x=>x.id===id)||{name:'?'}).name).join(', ')):''}</div></div></div><div class="row" style="margin-top:10px"><a class="btn" href="${esc(safeU(a.url))}" target="_blank" rel="noopener">Öffnen</a>${ed?`<a class="btn ghost" href="#g-ambbearb-${a.id}">Bearbeiten</a><button class="btn ghost" data-ad="${a.id}">Löschen</button>`:''}</div></div>`;
+const gcard=x=>`<div class="rc" data-n="${esc(x.name.toLowerCase())}"><a class="rl" href="#g-${x.id}">${x.img?`<img src="${x.img}" alt="">`:`<div class="ph">${svg('dice',36)}</div>`}<div class="t"><b>${esc(x.name)}</b><small>${gmeta(x)}</small></div></a></div>`;
+const filt=(k,f)=>`<div class="grid"><div><label for="${k}p">Personen</label><input id="${k}p" type="number" min="0" inputmode="numeric" data-f="${k}.p" value="${f.p||''}" placeholder="Egal"></div><div><label for="${k}c">Komplexität</label><select id="${k}c" data-f="${k}.cx"><option value="">Egal</option>${CX.map((c,i)=>`<option value="${i}"${f.cx===String(i)?' selected':''}>${c}</option>`).join('')}</select></div><div><label for="${k}d">Dauer</label><select id="${k}d" data-f="${k}.d">${DB.map(([v,l])=>`<option value="${v}"${f.d===v?' selected':''}>${l}</option>`).join('')}</select></div><div><label for="${k}m">Art</label><select id="${k}m" data-f="${k}.m"><option value="">Egal</option>${Object.entries(MD).map(([v,l])=>`<option value="${v}"${f.m===v?' selected':''}>${l}</option>`).join('')}</select></div></div>`;
+const GT=[['spiele','Sammlung'],['g-wunsch','Wunschliste'],['g-amb','Ambience'],['g-zufall','Zufall']];
+function gform(x){const e=!!x;x=x||{name:'',img:'',pmin:2,pmax:4,dmin:30,dmax:60,cx:1,mode:'komp'};const n=(id,l,v)=>`<div><label for="${id}">${l}</label><input id="${id}" type="number" min="1" inputmode="numeric" value="${v}"></div>`;
+ return `<div class="wrap"><a class="back" href="#${e?'g-'+x.id:'spiele'}">← Abbrechen</a><h1>${e?'Spiel bearbeiten':'Neues Spiel'}</h1><section class="card"><label for="gn">Name</label><input id="gn" type="text" value="${esc(x.name)}"><label for="gi">Vorschaubild</label><input id="gi" type="file" accept="image/*"><img id="gpv" class="pv" alt="Vorschau" ${x.img?`src="${x.img}"`:''} style="display:${x.img?'block':'none'}"><div class="grid">${n('ga','Spieler min.',x.pmin)}${n('gb','Spieler max.',x.pmax)}${n('gc','Dauer min. (Min)',x.dmin)}${n('gd','Dauer max. (Min)',x.dmax)}</div><label for="gx">Komplexität</label><select id="gx">${CX.map((c,i)=>`<option value="${i}"${x.cx===i?' selected':''}>${c}</option>`).join('')}</select><label for="gm">Art</label><select id="gm">${Object.entries(MD).map(([v,l])=>`<option value="${v}"${x.mode===v?' selected':''}>${l}</option>`).join('')}</select></section><p class="sub" id="gmsg" role="status"></p><button class="btn" id="gs" style="width:100%">Speichern</button></div>`}
+function aform(a){const e=!!a;a=a||{name:'',type:'spotify',url:'',img:'',games:[]};
+ return `<div class="wrap"><a class="back" href="#g-amb">← Abbrechen</a><h1>${e?'Ambience bearbeiten':'Neue Ambience'}</h1><section class="card"><label for="an">Name</label><input id="an" type="text" value="${esc(a.name)}"><label for="at">Art</label><select id="at"><option value="spotify"${a.type==='spotify'?' selected':''}>Spotify-Playlist</option><option value="youtube"${a.type==='youtube'?' selected':''}>YouTube-Video</option></select><label for="au">Link</label><input id="au" type="url" placeholder="https://" value="${esc(a.url)}"><label for="ai">Vorschaubild (optional, bei YouTube automatisch)</label><input id="ai" type="file" accept="image/*"><img id="apv" class="pv" alt="Vorschau" ${a.img?`src="${a.img}"`:''} style="display:${a.img?'block':'none'}"><h2 style="margin-top:16px">Passt zu</h2>${GM().length?GM().map(x=>`<label class="chk"><input type="checkbox" data-ag="${x.id}"${a.games.includes(x.id)?' checked':''}><span>${esc(x.name)}</span></label>`).join(''):'<p class="sub">Noch keine Spiele in der Sammlung.</p>'}</section><p class="sub" id="amsg" role="status"></p><button class="btn" id="as" style="width:100%">Speichern</button></div>`}
+function spi(h){const head=`<div class="wrap"><a class="back" href="#start">← Start</a><h1>Spiele</h1><div class="tabs s">${GT.map(([k,t])=>`<a href="#${k}"${k===h?' aria-current="page"':''}>${t}</a>`).join('')}</div>`;let m;
+ if(h==='g-neu')return gform();
+ if(h==='g-ambneu')return aform();
+ if(m=h.match(/^g-bearb-(.+)$/)){const x=GM().find(z=>z.id===m[1]);if(x)return gform(x)}
+ if(m=h.match(/^g-ambbearb-(.+)$/)){const a=AM().find(z=>z.id===m[1]);if(a)return aform(a)}
+ if(h==='g-wunsch'){const l=WL().slice().sort((a,b)=>(b.v.fabi+b.v.gigi)-(a.v.fabi+a.v.gigi)),vs=(w,p)=>`<label for="v${p}${w.id}">${P[p].n}</label><select id="v${p}${w.id}" data-wv="${w.id}|${p}"${S.user===p?'':' disabled'}>${[0,1,2,3,4,5].map(i=>`<option value="${i}"${w.v[p]===i?' selected':''}>${i?'★'.repeat(i):'Keine Angabe'}</option>`).join('')}</select>`;
+  return head+`<section class="card"><h2>Spiel wünschen</h2><label for="wn">Name</label><input id="wn" type="text"><label for="wt">Notiz oder Link (optional)</label><input id="wt" type="text"><p class="sub" id="wm" role="status"></p><button class="btn" id="wa" style="width:100%">Auf die Wunschliste</button></section>`+(l.length?`<p class="sub">Sortiert nach Lust (Summe der Sterne). Jeder ändert nur die eigene Bewertung.</p>`+l.map(w=>`<div class="card"><div class="row"><b>${esc(w.name)}</b><span class="chip" style="margin-left:auto">${w.v.fabi+w.v.gigi} ★</span></div>${w.note?`<div class="sub">${esc(w.note)}</div>`:''}<div class="grid">${vs(w,'fabi')}${vs(w,'gigi')}</div><button class="btn ghost" data-wd="${w.id}" style="margin-top:12px">Entfernen</button></div>`).join(''):'<p class="sub">Die Wunschliste ist leer.</p>')+'</div>'}
+ if(h==='g-amb')return head+`<a class="btn" href="#g-ambneu" style="margin-bottom:12px">+ Neue Ambience</a>`+(AM().length?AM().map(a=>acard(a,1)).join(''):'<p class="sub">Noch keine Ambience. Lege Spotify-Playlists oder YouTube-Videos an und ordne sie Spielen zu.</p>')+'</div>';
+ if(h==='g-zufall')return head+`<p class="sub">Filter sind optional. Dann dreht das Glücksrad ein passendes Spiel aus eurer Sammlung.</p>`+filt('Z',ZF)+`<button class="btn" id="zs" style="width:100%;margin-top:14px">Rad drehen</button><div id="zw" aria-live="polite"></div></div>`;
+ if(m=h.match(/^g-([a-z0-9]+)$/)){const x=GM().find(z=>z.id===m[1]);if(x){const am=AM().filter(a=>a.games.includes(x.id));
+  return `<div class="wrap"><a class="back" href="#spiele">← Spiele</a>${x.img?`<img class="pv" src="${x.img}" alt="">`:''}<h1>${esc(x.name)}</h1><div><span class="chip">${x.pmin===x.pmax?x.pmin:x.pmin+'–'+x.pmax} Personen</span><span class="chip">${x.dmin===x.dmax?x.dmin:x.dmin+'–'+x.dmax} Min</span><span class="chip">${CX[x.cx]}</span><span class="chip">${MD[x.mode]}</span></div><h2 class="cat">Ambience</h2>${am.length?am.map(a=>acard(a)).join(''):'<p class="sub">Noch keine Ambience verknüpft. Lege sie im Reiter Ambience an.</p>'}<div class="row" style="margin-top:16px"><a class="btn ghost" href="#g-bearb-${x.id}">Bearbeiten</a><button class="btn ghost" id="gdel">Verkauft, löschen</button></div></div>`}}
+ const q=F.q.trim().toLowerCase(),l=GM().filter(x=>fits(x,F)&&x.name.toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name,'de'));
+ return head+`<input type="search" id="gq" placeholder="Spiele suchen" aria-label="Spiele suchen" value="${esc(F.q)}">`+filt('F',F)+`<a class="btn" href="#g-neu" style="margin-top:14px">+ Neues Spiel</a>`+(l.length?`<p class="sub">${l.length} von ${GM().length} Spielen</p><div class="rg">${l.map(gcard).join('')}</div>`:`<p class="sub">${GM().length?'Kein Spiel passt zu den Filtern.':'Noch keine Spiele. Lege das erste an.'}</p>`)+note+'</div>'}
+function spin(){const c=GM().filter(x=>fits(x,ZF)),box=g('zw');
+ if(!c.length){box.innerHTML='<p class="sub">Kein Spiel passt zu diesen Filtern. Lockere einen Filter.</p>';return}
+ const win=c[Math.random()*c.length|0],sh=a=>a.slice().sort(()=>Math.random()-.5);let s=sh(c.filter(x=>x!==win)).slice(0,11);s.splice(Math.random()*(s.length+1)|0,0,win);
+ const n=s.length,a=360/n,cols=['#E0A458','#7FA36B','#D98C5F','#A9C5A0','#C96F3B','#F3EBDD'],pt=d=>{const r=d*Math.PI/180;return[150+140*Math.sin(r),150-140*Math.cos(r)]},wi=s.indexOf(win),dur=S.anim?4:.1;
+ const sl=s.map((x,i)=>{const col=cols[i%cols.length],lab=x.name.length>13?x.name.slice(0,12)+'…':x.name;let d;if(n===1)d=`<circle cx="150" cy="150" r="140" fill="${col}"/>`;else{const[x1,y1]=pt(i*a),[x2,y2]=pt((i+1)*a);d=`<path d="M150 150L${x1} ${y1}A140 140 0 ${a>180?1:0} 1 ${x2} ${y2}Z" fill="${col}" stroke="#1F2A22" stroke-width="1"/>`}
+  return d+`<text transform="rotate(${(i+.5)*a-90} 150 150)" x="245" y="154" font-size="${n>8?10:12}" fill="#1F2A22" text-anchor="middle">${esc(lab)}</text>`}).join('');
+ box.innerHTML=`<svg class="wheel" viewBox="0 0 300 300" role="img" aria-label="Glücksrad"><g class="rot" id="rg" style="transition:transform ${dur}s cubic-bezier(.17,.67,.12,1)">${sl}</g><circle cx="150" cy="150" r="12" fill="#1F2A22"/><path d="M138 2L162 2L150 26Z" fill="#E0A458" stroke="#1F2A22" stroke-width="2"/></svg><div id="zr"></div>`;
+ g('zs').disabled=true;void g('rg').getBoundingClientRect();g('rg').style.transform=`rotate(${1800+360-(wi+.5)*a}deg)`;
+ setTimeout(()=>{const am=AM().filter(z=>z.games.includes(win.id));if(g('zs'))g('zs').disabled=false;if(g('zr'))g('zr').innerHTML=`<div class="card"><h2>Heute: ${esc(win.name)}</h2>${win.img?`<img class="pv" src="${win.img}" alt="">`:''}<div class="sub">${gmeta(win)}</div>${am.map(z=>acard(z)).join('')}<a class="btn ghost" href="#g-${win.id}" style="margin-top:10px">Zum Spiel</a></div>`},dur*1000+250)}
+function bindG(h){
+ if(g('gq'))g('gq').oninput=e=>{F.q=e.target.value;const q=F.q.trim().toLowerCase();$$('.rc').forEach(c=>c.style.display=c.dataset.n.includes(q)?'':'none')};
+ $$('[data-f]').forEach(e=>e.onchange=()=>{const[k,key]=e.dataset.f.split('.'),o=k==='F'?F:ZF;o[key]=key==='p'?Math.max(0,+e.value||0):e.value;render()});
+ if(g('zs'))g('zs').onclick=spin;
+ if(g('gs')){const m=h.match(/^g-bearb-(.+)$/),x=m&&GM().find(z=>z.id===m[1]);let img=x?x.img:'';
+  g('gi').onchange=e=>{const f=e.target.files[0];if(f)shrink(f,d=>{img=d;g('gpv').src=d;g('gpv').style.display='block'})};
+  g('gs').onclick=()=>{const name=g('gn').value.trim(),ms=t=>g('gmsg').textContent=t;if(!name)return ms('Bitte gib dem Spiel einen Namen.');
+   const a=Math.max(1,+g('ga').value||1),b=Math.max(a,+g('gb').value||a),c=Math.max(1,+g('gc').value||1),d=Math.max(c,+g('gd').value||c),rec={id:x?x.id:uid(),name,img,pmin:a,pmax:b,dmin:c,dmax:d,cx:+g('gx').value,mode:g('gm').value},old=GD.games;
+   GD.games=x?old.map(z=>z.id===rec.id?rec:z):[rec,...old];if(!saveG()){GD.games=old;return ms('Der Speicher ist voll. Wähle ein kleineres Bild.')}location.hash='g-'+rec.id}}
+ if(g('gdel')){const m=h.match(/^g-(.+)$/);two('gdel','Wirklich löschen?',()=>{GD.games=GM().filter(z=>z.id!==m[1]);AM().forEach(a=>a.games=a.games.filter(i=>i!==m[1]));saveG();location.hash='spiele'})}
+ if(g('wa'))g('wa').onclick=()=>{const n=g('wn').value.trim();if(!n){g('wm').textContent='Bitte gib einen Namen ein.';return}WL().push({id:uid(),name:n,note:g('wt').value.trim(),v:{fabi:0,gigi:0}});saveG();render()};
+ $$('[data-wv]').forEach(e=>e.onchange=()=>{const[id,p]=e.dataset.wv.split('|'),w=WL().find(z=>z.id===id);w.v[p]=+e.value;saveG();render()});
+ conf('[data-wd]','Sicher?',b=>{GD.wish=WL().filter(z=>z.id!==b.dataset.wd);saveG();render()});
+ conf('[data-ad]','Sicher?',b=>{GD.amb=AM().filter(z=>z.id!==b.dataset.ad);saveG();render()});
+ if(g('as')){const m=h.match(/^g-ambbearb-(.+)$/),a0=m&&AM().find(z=>z.id===m[1]);let img=a0?a0.img:'';
+  g('ai').onchange=e=>{const f=e.target.files[0];if(f)shrink(f,d=>{img=d;g('apv').src=d;g('apv').style.display='block'})};
+  g('as').onclick=()=>{const name=g('an').value.trim(),url=safeU(g('au').value.trim()),ms=t=>g('amsg').textContent=t;if(!name)return ms('Bitte gib einen Namen ein.');if(!url)return ms('Bitte gib einen gültigen Link ein (beginnt mit https://).');
+   const rec={id:a0?a0.id:uid(),name,type:g('at').value,url,img,games:$$('[data-ag]').filter(c=>c.checked).map(c=>c.dataset.ag)},old=GD.amb;GD.amb=a0?old.map(z=>z.id===rec.id?rec:z):[rec,...old];if(!saveG()){GD.amb=old;return ms('Der Speicher ist voll. Wähle ein kleineres Bild.')}location.hash='g-amb'}}
+}
+
+/* ---- Anmeldung und Synchronisation (Firebase) ---- */
+function authMsg(c){return({'auth/invalid-credential':'E-Mail oder Passwort stimmt nicht.','auth/wrong-password':'E-Mail oder Passwort stimmt nicht.','auth/user-not-found':'E-Mail oder Passwort stimmt nicht.','auth/invalid-email':'Die E-Mail-Adresse ist ungültig.','auth/too-many-requests':'Zu viele Versuche. Bitte warte kurz und versuche es erneut.','auth/network-request-failed':'Keine Verbindung. Prüfe dein Internet.','auth/operation-not-allowed':'E-Mail/Passwort ist in Firebase noch nicht aktiviert.','auth/unauthorized-domain':'Diese Adresse ist in Firebase noch nicht als autorisierte Domain eingetragen.'})[c]||'Anmeldung fehlgeschlagen'+(c?' ('+c+')':'')+'.'}
+function gateV(){
+ if(FBH.st==='login')return `<div class="wrap"><h1>Jurassic Wood</h1><p class="sub">Melde dich an, um eure gemeinsamen Daten zu sehen.</p><section class="card"><label for="le">E-Mail</label><input id="le" type="email" autocomplete="username" inputmode="email"><label for="lp">Passwort</label><input id="lp" type="password" autocomplete="current-password"><p class="sub" id="lm" role="alert">${esc(FBH.err)}</p><button class="btn" id="lb" style="width:100%;margin-top:8px">Anmelden</button></section></div>`;
+ return `<div class="wrap"><h1>Jurassic Wood</h1><p class="sub" role="status">${FBH.err?esc(FBH.err):'Verbinde …'}</p>${FBH.err?'<div class="row"><button class="btn" id="lr">Erneut versuchen</button><button class="btn ghost" id="lq">Abmelden</button></div>':''}</div>`}
+function bindGate(){
+ const b=g('lb');
+ if(b){const go=async()=>{const e=g('le').value.trim(),p=g('lp').value;if(!e||!p){g('lm').textContent='Bitte E-Mail und Passwort eingeben.';return}b.disabled=true;g('lm').textContent='';try{await FBH.login(e,p)}catch(x){FBH.err=authMsg(x&&x.code);b.disabled=false;g('lm').textContent=FBH.err}};b.onclick=go;g('lp').onkeydown=ev=>{if(ev.key==='Enter')go()}}
+ if(g('lr'))g('lr').onclick=()=>location.reload();
+ if(g('lq'))g('lq').onclick=()=>FBH.logout()}
+FBH.cols={recipes:[()=>R,a=>{R=a}],games:[()=>GD.games,a=>{GD.games=a}],wish:[()=>GD.wish,a=>{GD.wish=a}],amb:[()=>GD.amb,a=>{GD.amb=a}]};
+FBH.soft=()=>{const a=document.activeElement,h=location.hash.slice(1),typing=a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&!/^(checkbox|radio|button|submit)$/.test(a.type||'');if(typing||/neu|edit|zutaten/.test(h))return;render()};
+
 function deco(){const d=$('#deco');d.innerHTML='';if(!S.anim)return;const se=cur(),
  cols={autumn:['#E0A458','#D98C5F','#C96F3B'],winter:['#FFFFFF','#DCEBFF'],spring:['#F4B6C8','#CFE6A8'],summer:['#F2B53B','#FFE08A']}[se];
  for(let i=0;i<16;i++){const e=document.createElement('span'),s=6+Math.random()*10;e.className='p '+se;
@@ -205,16 +408,91 @@ function deco(){const d=$('#deco');d.innerHTML='';if(!S.anim)return;const se=cur
 function theme(){document.documentElement.dataset.season=cur();deco()}
 function hint(){const e=g('seh');if(e)e.textContent=S.season==='auto'?`Wechselt automatisch mit dem Datum, gerade: ${SE[auto()]}.`:`Fest eingestellt: ${SE[S.season]}.`}
 function render(){const h=location.hash.slice(1)||'start';document.documentElement.dataset.season=cur();if(!$('#deco').firstChild)deco();
- const v=!S.user?picker():isR(h)?rez(h):M[h]?module(h):h==='einstellungen'?settings():home();
- $('#app').innerHTML=v+(S.user?nav(isR(h)?'rezepte':h):'');if(S.user&&isR(h))bindR(h);
+ if(FBH.st!=='in'&&FBH.st!=='offline'){$('#app').innerHTML=gateV();bindGate();return}
+ note=FBH.st==='offline'?'<p class="sub">Offline-Modus: '+esc(FBH.why||'Firebase ist nicht erreichbar.')+' Die Daten bleiben nur auf diesem Gerät.</p>':FBH.warn?'<p class="sub" role="alert">'+esc(FBH.warn)+'</p>':'';
+ const v=!S.user?picker():isR(h)?rez(h):isH(h)?hau(h):isV(h)?rei(h):isG(h)?spi(h):M[h]?module(h):h==='einstellungen'?settings():home();
+ $('#app').innerHTML=v+(S.user?nav(isR(h)?'rezepte':isH(h)?'haushalt':isV(h)?'reisen':isG(h)?'spiele':h):'');if(S.user&&isR(h))bindR(h);if(S.user&&isH(h))bindH();if(S.user&&isV(h))bindV(h);if(S.user&&isG(h))bindG(h);
  document.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{S.user=b.dataset.u;save();location.hash='start';render()});
  if(g('sw'))g('sw').onclick=()=>{S.user=null;save();render()};
+ if(g('lo'))g('lo').onclick=()=>FBH.logout();
  if(g('se'))g('se').onchange=e=>{S.season=e.target.value;save();theme();hint()};
  if(g('an'))g('an').onchange=e=>{S.anim=e.target.checked;save();deco()};
  if(g('ft'))g('ft').oninput=e=>{S.tickets[S.user]=e.target.value;save()};
  hint()}
 addEventListener('hashchange',()=>{render();scrollTo(0,0)});
 render();
+</script>
+<script type="module">
+/*SYNC-START*/
+const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==='object'&&!Array.isArray(x)?Object.fromEntries(Object.keys(x).sort().map(q=>[q,x[q]])):x);
+const sig=it=>canon(Object.assign({},it,{img:typeof it.img==='string'?it.img.length+':'+it.img.slice(-24):it.img}));
+function startSync(FS,db,H,onState){
+ const NAMES=Object.keys(H.cols),ready={},last={shared:undefined},unsubs=[];
+ let all=false,stopped=false;
+ NAMES.forEach(n=>{last[n]={}});
+ const code=e=>e&&e.code?' ('+e.code+')':'';
+ const failL=e=>{if(stopped)return;H.err=e&&e.code==='permission-denied'?'Keine Berechtigung auf die Datenbank. Prüfe die Firestore-Regeln und ob dein Konto freigegeben ist.':'Verbindung zu Firebase fehlgeschlagen'+code(e)+'.';onState('error')};
+ const failW=e=>{H.warn=e&&e.code==='permission-denied'?'Änderungen konnten nicht gespeichert werden: keine Berechtigung (Firestore-Regeln).':'Änderungen konnten nicht synchronisiert werden'+code(e)+'.';if(all)H.soft()};
+ const changed=()=>{if(!all)return;H.persistS();H.soft()};
+ function applyShared(d){const c=canon(d);last.shared=c;if(c!==canon(H.getShared())){H.setShared(d);changed()}}
+ function applyCol(n,remote){
+  const get=H.cols[n][0],set=H.cols[n][1],loc=get(),
+   m=new Map(loc.filter(x=>x&&x.id).map(x=>[x.id,sig(x)])),rs=new Map(remote.map(x=>[x.id,sig(x)]));
+  last[n]=Object.fromEntries(rs);
+  let same=m.size===rs.size;
+  if(same)for(const [id,s] of rs){if(m.get(id)!==s){same=false;break}}
+  if(!same){remote.sort((a,b)=>a.id<b.id?1:-1);set(remote);changed()}}
+ function doPush(){
+  if(!all||stopped)return;
+  try{
+   const sh=H.getShared(),cs=canon(sh);
+   if(cs!==last.shared){last.shared=cs;FS.setDoc(FS.doc(db,'shared','main'),sh).catch(failW)}
+   for(const n of NAMES){
+    const items=H.cols[n][0](),seen=new Set(),L=last[n];
+    for(const it of items){if(!it||!it.id)continue;seen.add(it.id);const s=sig(it);if(L[it.id]!==s){L[it.id]=s;FS.setDoc(FS.doc(db,n,it.id),JSON.parse(JSON.stringify(it))).catch(failW)}}
+    for(const id of Object.keys(L)){if(!seen.has(id)){delete L[id];FS.deleteDoc(FS.doc(db,n,id)).catch(failW)}}}
+  }catch(e){failW(e)}}
+ const check=()=>{if(all||stopped)return;if(!ready.shared||!NAMES.every(n=>ready[n]))return;all=true;H.persistS();H.clearCols();onState('in');doPush()};
+ unsubs.push(FS.onSnapshot(FS.doc(db,'shared','main'),snap=>{
+  if(stopped)return;
+  if(!ready.shared){
+   if(snap.exists()||!snap.metadata.fromCache){ready.shared=true;if(snap.exists())applyShared(snap.data());check()}
+   return}
+  if(snap.exists())applyShared(snap.data())},failL));
+ NAMES.forEach(n=>unsubs.push(FS.onSnapshot(FS.collection(db,n),snap=>{
+  if(stopped)return;
+  const remote=[];snap.forEach(d=>{const x=d.data();if(x&&x.id)remote.push(x)});
+  if(!ready[n]){
+   if(!snap.empty||!snap.metadata.fromCache){
+    ready[n]=true;
+    if(snap.empty&&H.cols[n][0]().length){last[n]={}}else{applyCol(n,remote)}
+    check()}
+   return}
+  applyCol(n,remote)},failL)));
+ H.push=doPush;
+ return{push:doPush,stop(){stopped=true;unsubs.forEach(u=>{try{u()}catch(e){}});H.push=()=>{}}}}
+/*SYNC-END*/
+(async()=>{
+ const CFG={apiKey:"AIzaSyCHKFHc-dUoUzUnJ01PkcTkHbA9G4K-nxk",authDomain:"jurassicwoodapp.firebaseapp.com",projectId:"jurassicwoodapp",storageBucket:"jurassicwoodapp.firebasestorage.app",messagingSenderId:"1030398262587",appId:"1:1030398262587:web:f664e7a464962f26e3cb1e"};
+ const V='13.4.0',U=m=>'https://www.gstatic.com/firebasejs/'+V+'/firebase-'+m+'.js';
+ const giveUp=m=>{if(FBH.st==='loading'){FBH.why=m;FBH.st='offline';render()}};
+ const to=setTimeout(()=>giveUp('Firebase konnte nicht rechtzeitig geladen werden.'),8000);
+ let A,AU,FS;
+ try{[A,AU,FS]=await Promise.all([import(U('app')),import(U('auth')),import(U('firestore'))])}catch(e){clearTimeout(to);giveUp('Firebase konnte nicht geladen werden.');return}
+ clearTimeout(to);
+ if(FBH.st==='offline')return;
+ const app=A.initializeApp(CFG),auth=AU.getAuth(app);
+ let db;try{db=FS.initializeFirestore(app,{localCache:FS.persistentLocalCache({tabManager:FS.persistentMultipleTabManager()})})}catch(e){db=FS.getFirestore(app)}
+ let sync=null;
+ FBH.login=(e,p)=>AU.signInWithEmailAndPassword(auth,e,p);
+ FBH.logout=async()=>{if(sync){sync.stop();sync=null}try{await AU.signOut(auth)}catch(e){}try{FBH.clearCols();const s=JSON.parse(localStorage.getItem('jw')||'{}'),k={};['user','season','anim'].forEach(x=>{if(x in s)k[x]=s[x]});localStorage.setItem('jw',JSON.stringify(k))}catch(e){}location.reload()};
+ AU.onAuthStateChanged(auth,u=>{
+  if(sync){sync.stop();sync=null}
+  if(!u){FBH.email='';FBH.err='';FBH.st='login';render();return}
+  FBH.email=u.email||'';FBH.err='';FBH.warn='';FBH.st='sync';render();
+  sync=startSync(FS,db,FBH,s=>{FBH.st=s==='in'?'in':'sync';render()})
+ },e=>{FBH.err='Anmeldestatus konnte nicht geprüft werden'+(e&&e.code?' ('+e.code+')':'')+'.';FBH.st='login';render()});
+})();
 </script>
 </body>
 </html>
