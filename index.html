@@ -224,6 +224,16 @@ button.gp{border:0;cursor:pointer;font-family:inherit}
 .dkr input[type=text]{flex:1;min-width:0}
 input[type=time]{width:100%;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
 [hidden]{display:none!important}
+.qh{margin-top:18px;padding:14px 16px;border-radius:20px;border:1px solid var(--line);background:var(--card)}
+.qhh{display:flex;align-items:center;min-height:36px;color:var(--tx);text-decoration:none;font:600 17px 'Fraunces',Georgia,serif}
+.qhh em{margin-left:auto;font:400 13px 'Nunito',system-ui,sans-serif;color:var(--sub);font-style:normal}.qhh::after{content:'›';font-size:22px;color:var(--sub);margin-left:6px;font-family:'Nunito',sans-serif}
+.qr{display:flex;align-items:center;gap:12px;min-height:48px;padding:4px 0;color:var(--tx);text-decoration:none;border-top:1px solid var(--line)}
+.qr>i{flex:none;width:5px;align-self:stretch;margin:4px 0;border-radius:3px}
+.qr span{flex:1;min-width:0}.qr b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.qr small{display:block;font-size:13px;color:var(--sub)}
+.qc{flex:none;width:28px;height:28px;margin:8px 0;border-radius:50%;border:2px solid var(--ac);background:transparent;cursor:pointer;position:relative}
+.qc::before{content:'';position:absolute;inset:-8px}
+.qc.on{background:var(--ac)}.qc.on::after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;color:var(--ink);font-weight:700;font-size:15px}
+.qm{display:block;min-height:36px;padding-top:8px;color:var(--ac);font-size:14px;font-weight:700;text-decoration:none;border-top:1px solid var(--line)}
 .dchk input:checked+span{text-decoration:none;color:var(--tx)}
 @keyframes fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot))}}
 @keyframes rise{to{transform:translate3d(var(--dx),-110vh,0)}}
@@ -272,7 +282,7 @@ let note='<p class="sub">Entwurf: Die Daten bleiben vorerst nur auf diesem Gerä
 function picker(){return `<div class="wrap"><h1>Jurassic Wood App</h1><p class="sub">Wer bist du?</p><div class="pick">${Object.keys(P).map(k=>`<button data-u="${k}">${av(k,48)}<span><b>${P[k].n}</b><br><small class="sub">${P[k].r}</small></span></button>`).join('')}</div>${note}</div>`}
 function sceneV(){const se=cur(),p=SPAL[se]||SPAL.off,f=FIG[se]||FIG.off,th=94,sh=64,tw=Math.round(th*f.fabi.r),sw=Math.round(sh*f.gigi.r);
  return `<div class="scene" aria-hidden="true">${SCENE.replace(/\{(\w\w)\}/g,(m,k)=>p[k]||m).replace('<!--FIG-->',`<image href="${f.fabi.u}" x="${324-tw}" y="${207-th}" width="${tw}" height="${th}"/><image href="${f.gigi.u}" x="338" y="${208-sh}" width="${sw}" height="${sh}"/>`)}</div>`}
-function home(){const u=S.user,d=new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});return `<div class="wrap"><header class="top"><div><h1 class="app">Jurassic Wood App</h1><div class="sub" style="margin:2px 0 0">${d}</div></div><a class="me" href="#einstellungen" aria-label="Angemeldet als ${P[u].n}, Profil öffnen">${av(u,36)}${P[u].n}</a></header>
+function home(){const u=S.user,d=new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});return `<div class="wrap" style="padding-bottom:calc(10vh + 90px)"><header class="top"><div><h1 class="app">Jurassic Wood App</h1><div class="sub" style="margin:2px 0 0">${d}</div></div><a class="me" href="#einstellungen" aria-label="Angemeldet als ${P[u].n}, Profil öffnen">${av(u,36)}${P[u].n}</a></header>${todayV()}
 <div class="mg">${Object.keys(M).map(k=>`<a class="mt" href="#${k}"><b>${M[k][0]}</b><small>${M[k][1]}</small><svg width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${BIG[M[k][2]]}</svg></a>`).join('')}</div></div>${sceneV()}`}
 function module(k){const m=M[k];return `<div class="wrap"><a class="back" href="#start">← Start</a><h1>${m[0]}</h1><p class="sub">${m[1]}</p><section class="card"><h2>Geplant</h2><ul>${m[3].map(t=>`<li>${t}</li>`).join('')}</ul></section><p class="sub">Dieses Modul bauen wir als Nächstes aus.</p></div>`}
 function settings(){const u=S.user;return `<div class="wrap"><a class="back" href="#start">← Start</a><h1>Profil und Einstellungen</h1>
@@ -681,6 +691,22 @@ function bindD(h){
  if(g('kna'))g('kna').onclick=()=>{const n=g('knn').value.trim();if(!n){g('knn').focus();return}DCT().push({id:uid(),n,c:g('knc').value});save();render()};
 }
 
+/* ---- Startseite: Heute-Vorschau ---- */
+function todayV(){const u=S.user,now=new Date(),ds=dstr(now);HOC={};
+ const ev=EV().filter(e=>evOn(e,ds)).sort(evSort),evs=ev.slice(0,3);
+ const tk=hList('day',now,u).filter(o=>!stOf(o.key)&&!swOpen(o.key)),tks=tk.slice(0,4),wk=openN(hList('week',now,u));
+ tk.forEach(o=>HOC[o.key]=o);
+ return `<section class="qh" id="qh"><a class="qhh" href="#termine"><span>Heutige Termine</span><em>${ev.length?ev.length:'keine'}</em></a>
+ ${evs.map(e=>{const c=dcOf(e.cat);return `<a class="qr" href="#termine" data-qd="${ds}"><i style="background:${c.c}"></i><span><b>${esc(e.title)}${evAge(e,ds)}</b><small>${e.allDay||!e.time?'Ganztägig':e.time+' Uhr'} · ${esc(c.n)}</small></span></a>`}).join('')}${ev.length>3?`<a class="qm" href="#termine" data-qd="${ds}">+ ${ev.length-3} weitere</a>`:''}
+ <a class="qhh" href="#h-liste" data-qh="1" style="margin-top:10px"><span>Deine Aufgaben heute</span><em>${tk.length?tk.length+' offen':'alles erledigt'}</em></a>
+ ${tks.map(o=>`<div class="qr"><button class="qc" data-qk="${esc(o.key)}" aria-label="${esc(o.t.title)} als erledigt markieren"></button><span><b>${esc(o.t.title)}</b><small>${esc(o.t.cat||'Allgemein')} · ${o.t.points} Pkt</small></span></div>`).join('')}${tk.length>4?`<a class="qm" href="#h-liste" data-qh="1">+ ${tk.length-4} weitere</a>`:''}
+ ${wk?`<a class="qm" href="#h-liste" data-qh="week">Diese Woche noch ${wk} offen ›</a>`:''}</section>`}
+function bindQ(){
+ $$('[data-qd]').forEach(a=>a.onclick=()=>{DSEL=a.dataset.qd;DV='month'});
+ $$('[data-qh]').forEach(a=>a.onclick=()=>{HV=a.dataset.qh==='week'?'week':'day';HDO=0;HF=null});
+ $$('[data-qk]').forEach(b=>b.onclick=()=>{const k=b.dataset.qk,o=HOC[k];if(!o)return;b.classList.add('on');const L=LG(),i=L.findIndex(x=>x.k===k);if(i>=0)L.splice(i,1);L.push({k,s:'done',p:o.p,pts:ptsOf(o.t,'done'),at:Date.now(),title:o.t.title});save();setTimeout(render,350)});
+}
+
 /* ---- Anmeldung und Synchronisation (Firebase) ---- */
 function authMsg(c){return({'auth/invalid-credential':'E-Mail oder Passwort stimmt nicht.','auth/wrong-password':'E-Mail oder Passwort stimmt nicht.','auth/user-not-found':'E-Mail oder Passwort stimmt nicht.','auth/invalid-email':'Die E-Mail-Adresse ist ungültig.','auth/too-many-requests':'Zu viele Versuche. Bitte warte kurz und versuche es erneut.','auth/network-request-failed':'Keine Verbindung. Prüfe dein Internet.','auth/operation-not-allowed':'E-Mail/Passwort ist in Firebase noch nicht aktiviert.','auth/unauthorized-domain':'Diese Adresse ist in Firebase noch nicht als autorisierte Domain eingetragen.'})[c]||'Anmeldung fehlgeschlagen'+(c?' ('+c+')':'')+'.'}
 function gateV(){
@@ -704,7 +730,7 @@ function render(){const h=location.hash.slice(1)||'start';document.documentEleme
  if(FBH.st!=='in'&&FBH.st!=='offline'){$('#app').innerHTML=gateV();bindGate();return}
  note=FBH.st==='offline'?'<p class="sub">Offline-Modus: '+esc(FBH.why||'Firebase ist nicht erreichbar.')+' Die Daten bleiben nur auf diesem Gerät.</p>':FBH.warn?'<p class="sub" role="alert">'+esc(FBH.warn)+'</p>':'';
  const v=!S.user?picker():isR(h)?rez(h):isH(h)?hau(h):isV(h)?rei(h):isG(h)?spi(h):isD(h)?dat(h):M[h]?module(h):h==='einstellungen'?settings():home();
- $('#app').innerHTML=v+(S.user?nav(isR(h)?'rezepte':isH(h)?'haushalt':isV(h)?'reisen':isG(h)?'spiele':isD(h)?'termine':h):'');if(S.user&&isR(h))bindR(h);if(S.user&&isH(h))bindH();if(S.user&&isV(h))bindV(h);if(S.user&&isG(h))bindG(h);if(S.user&&isD(h))bindD(h);
+ $('#app').innerHTML=v+(S.user?nav(isR(h)?'rezepte':isH(h)?'haushalt':isV(h)?'reisen':isG(h)?'spiele':isD(h)?'termine':h):'');if(S.user&&isR(h))bindR(h);if(S.user&&isH(h))bindH();if(S.user&&isV(h))bindV(h);if(S.user&&isG(h))bindG(h);if(S.user&&isD(h))bindD(h);if(S.user&&g('qh'))bindQ();
  document.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{S.user=b.dataset.u;save();location.hash='start';render()});
  if(g('sw'))g('sw').onclick=()=>{S.user=null;save();render()};
  if(g('lo'))g('lo').onclick=()=>FBH.logout();
