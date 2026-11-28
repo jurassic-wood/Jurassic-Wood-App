@@ -192,6 +192,39 @@ h1.app{color:var(--tx);font-size:28px;line-height:1.1}
 .stat{display:flex;align-items:center;gap:20px;margin:16px 0}.pie{width:130px;height:130px;flex:none}
 .stat dl{display:grid;grid-template-columns:auto auto;gap:6px 14px;margin:0;align-items:center}.stat dt{display:flex;align-items:center;gap:8px;color:var(--sub)}.stat dd{margin:0;font-weight:700;text-align:right}
 .stat i{width:10px;height:10px;border-radius:3px;display:inline-block}.stat .tot{border-top:1px solid var(--line);padding-top:6px;color:var(--tx);font-weight:700}
+/* Jurassic Dates */
+.nav a{font-size:12px;padding:0 2px}
+button.gp{border:0;cursor:pointer;font-family:inherit}
+.dfl{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.dfc{flex:none;display:flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;font-size:14px;cursor:pointer}
+.dfc i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dfc[aria-pressed=false]{opacity:.45;text-decoration:line-through}
+.mg7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.mg7>span{text-align:center;font-size:12px;font-weight:700;color:var(--sub);padding:2px 0}
+.mc{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;min-height:52px;padding:6px 0 4px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
+.mc b{font-size:15px;line-height:1}.mc.out{opacity:.4}.mc.td b{color:var(--ac)}
+.mc[aria-current]{border:2px solid var(--ac);background:var(--tile,var(--card))}
+.mdots{display:flex;gap:3px;align-items:center;min-height:8px}.mdots i{width:7px;height:7px;border-radius:50%;display:block}.mdots em{font-style:normal;font-size:11px;line-height:7px;color:var(--sub)}
+.dday h2{margin:18px 0 8px;font-size:18px}
+.ev{display:flex;align-items:stretch;gap:12px;width:100%;margin:6px 0;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+.evb{flex:none;width:5px;border-radius:3px}
+.evt{flex:1;min-width:0}.evt b{display:block;font-size:16px}.evt small{display:block;color:var(--sub);font-size:13px}.evt .evn{margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dnx{font-size:13px;font-weight:700;color:var(--sub);margin:12px 0 0}
+.wd{margin:12px 0;padding-top:4px;border-top:1px solid var(--line)}
+.wdh{display:flex;align-items:center;gap:8px;min-height:44px}.wdh b{font-size:16px}.wdh span{color:var(--sub);font-size:14px}
+.wd.td .wdh b{color:var(--ac)}
+.wda{margin-left:auto;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:20px;cursor:pointer}
+.wde{margin:0 0 4px}
+.dcs{display:flex;flex-wrap:wrap;gap:8px}
+.dcc{position:relative;display:flex;align-items:center;gap:8px;min-height:44px;margin:0;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font-size:15px;cursor:pointer}
+.dcc input{position:absolute;opacity:0;pointer-events:none}.dcc i{width:12px;height:12px;border-radius:50%}
+.dcc:has(input:checked){border:2px solid var(--ac);font-weight:700}
+.dkr{display:flex;align-items:center;gap:10px;padding:6px 0}
+.dkr input[type=color]{flex:none;width:48px;height:44px;padding:2px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.dkr input[type=text]{flex:1;min-width:0}
+input[type=time]{width:100%;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
+[hidden]{display:none!important}
+.dchk input:checked+span{text-decoration:none;color:var(--tx)}
 @keyframes fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot))}}
 @keyframes rise{to{transform:translate3d(var(--dx),-110vh,0)}}
 </style>
@@ -219,7 +252,7 @@ const cur=()=>{const v=S.season;return v==='auto'||!SE[v]?auto():v};
 const SIC={auto:'<path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z" fill="#F2B53B"/>',spring:'<g fill="#E86A92"><circle cx="12" cy="6.5" r="4"/><circle cx="17.2" cy="10.3" r="4"/><circle cx="15.2" cy="16.5" r="4"/><circle cx="8.8" cy="16.5" r="4"/><circle cx="6.8" cy="10.3" r="4"/></g><circle cx="12" cy="12" r="3" fill="#F4C46A"/>',summer:'<circle cx="12" cy="12" r="9" fill="#F2B53B"/><circle cx="12" cy="12" r="6" fill="#F7C94F"/>',autumn:'<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z" fill="#C96F3B"/><path d="M4 20L15 9" stroke="#8A4A1F" stroke-width="1.6" stroke-linecap="round"/>',halloween:'<ellipse cx="12" cy="14" rx="9" ry="7" fill="#F08A24"/><path d="M12 7v-3" stroke="#3F7A30" stroke-width="2.2" stroke-linecap="round"/><path d="M8 13l1.5-1.5L11 13M13 13l1.5-1.5L16 13M8.5 16.5q3.5 2 7 0" stroke="#5A2A06" stroke-width="1.4" fill="none" stroke-linecap="round"/>',winter:'<g stroke="#4C9BE0" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></g>',xmas:'<path d="M12 2l5 7h-2.5l4 6H15l3.5 5h-13L9 15H5.5l4-6H7z" fill="#2F7D4A"/><rect x="10.5" y="20" width="3" height="3" fill="#7A4A2E"/><circle cx="12" cy="2.5" r="1.6" fill="#F2B53B"/>',off:'<circle cx="12" cy="12" r="8.5" fill="none" stroke="#C0504D" stroke-width="2.4"/><path d="M6 6l12 12" stroke="#C0504D" stroke-width="2.4"/>'};
 const I={house:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',pot:'<path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM8 6c0-2 2-2 2-4M14 6c0-2 2-2 2-4"/>',train:'<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8 21l2-4M16 21l-2-4"/>',dice:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01" stroke-width="2.5"/>',sport:'<path d="M6 8v8M3 10v4M18 8v8M21 10v4M6 12h12"/>',cog:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
 const svg=(k,s=28)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
-const BIG={"broom": "<path d=\"M32 4L22 24\"/><path d=\"M13 24h18l4 18H9z\"/><path d=\"M16 30l-1 12M22 30v12M28 30l1 12\"/>", "pot2": "<path d=\"M8 22h32v11a9 9 0 0 1-9 9H17a9 9 0 0 1-9-9z\"/><path d=\"M4 22h40\"/><path d=\"M18 14c0-3 3-3 3-6M27 14c0-3 3-3 3-6\"/>", "case": "<rect x=\"7\" y=\"15\" width=\"34\" height=\"25\" rx=\"4\"/><path d=\"M18 15v-4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4M7 25h34M15 40v3M33 40v3\"/>", "meeple": "<path d=\"M24 5a6 6 0 0 1 6 6c0 2-1 3.6-2.2 4.7C34 16.7 42 19 42 23c0 2-3 3-7.5 3L41 42H29l-5-8-5 8H7l6.5-16C9 26 6 25 6 23c0-4 8-6.3 14.2-7.3C19 14.6 18 13 18 11a6 6 0 0 1 6-6z\"/>"};
+const BIG={"broom": "<path d=\"M32 4L22 24\"/><path d=\"M13 24h18l4 18H9z\"/><path d=\"M16 30l-1 12M22 30v12M28 30l1 12\"/>", "pot2": "<path d=\"M8 22h32v11a9 9 0 0 1-9 9H17a9 9 0 0 1-9-9z\"/><path d=\"M4 22h40\"/><path d=\"M18 14c0-3 3-3 3-6M27 14c0-3 3-3 3-6\"/>", "case": "<rect x=\"7\" y=\"15\" width=\"34\" height=\"25\" rx=\"4\"/><path d=\"M18 15v-4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4M7 25h34M15 40v3M33 40v3\"/>", "cal": "<rect x=\"6\" y=\"10\" width=\"36\" height=\"32\" rx=\"5\"/><path d=\"M6 19h36M16 5v9M32 5v9\"/><path d=\"M14 27h4M22 27h4M30 27h4M14 34h4M22 34h4\"/>", "meeple": "<path d=\"M24 5a6 6 0 0 1 6 6c0 2-1 3.6-2.2 4.7C34 16.7 42 19 42 23c0 2-3 3-7.5 3L41 42H29l-5-8-5 8H7l6.5-16C9 26 6 25 6 23c0-4 8-6.3 14.2-7.3C19 14.6 18 13 18 11a6 6 0 0 1 6-6z\"/>"};
 const SCENE="<svg viewBox=\"0 92 2000 120\" preserveAspectRatio=\"xMidYMax slice\" aria-hidden=\"true\"><defs><g id=\"pn\"><rect x=\"37\" y=\"186\" width=\"6\" height=\"12\" fill=\"#5E3720\"/><polygon points=\"40,96 62,136 18,136\" fill=\"{PN}\"/><polygon points=\"40,116 68,162 12,162\" fill=\"{PN}\"/><polygon points=\"40,140 74,190 6,190\" fill=\"{PN}\"/><polygon points=\"40,96 48,111 32,111\" fill=\"{PC}\"/><path d=\"M22 136 Q40 128 58 136 L54 132 Q40 126 26 132Z\" fill=\"{PC}\"/><path d=\"M16 162 Q40 152 64 162 L60 157 Q40 150 20 157Z\" fill=\"{PC}\"/></g></defs><polygon points=\"-139,152 -60,94 19,152\" fill=\"{MT}\"/><polygon points=\"-82,110 -60,94 -38,110 -52,107 -66,111\" fill=\"{MC}\"/><polygon points=\"2,152 75,84 148,152\" fill=\"{MT}\"/><polygon points=\"55,103 75,84 95,103 82,99 69,104\" fill=\"{MC}\"/><polygon points=\"113,152 189,87 265,152\" fill=\"{MT}\"/><polygon points=\"168,105 189,87 210,105 197,101 183,106\" fill=\"{MC}\"/><polygon points=\"249,152 322,86 395,152\" fill=\"{MT}\"/><polygon points=\"302,104 322,86 342,104 329,101 316,106\" fill=\"{MC}\"/><polygon points=\"407,152 490,88 573,152\" fill=\"{MT}\"/><polygon points=\"467,106 490,88 513,106 498,102 483,107\" fill=\"{MC}\"/><polygon points=\"505,152 602,102 699,152\" fill=\"{MT}\"/><polygon points=\"575,116 602,102 629,116 612,113 594,117\" fill=\"{MC}\"/><polygon points=\"653,152 738,102 823,152\" fill=\"{MT}\"/><polygon points=\"714,116 738,102 762,116 746,113 731,117\" fill=\"{MC}\"/><polygon points=\"756,152 853,87 950,152\" fill=\"{MT}\"/><polygon points=\"826,105 853,87 880,105 863,101 845,106\" fill=\"{MC}\"/><polygon points=\"889,152 966,86 1043,152\" fill=\"{MT}\"/><polygon points=\"944,104 966,86 988,104 974,101 960,106\" fill=\"{MC}\"/><polygon points=\"1026,152 1136,97 1246,152\" fill=\"{MT}\"/><polygon points=\"1105,112 1136,97 1167,112 1147,109 1127,114\" fill=\"{MC}\"/><polygon points=\"1213,152 1286,86 1359,152\" fill=\"{MT}\"/><polygon points=\"1266,104 1286,86 1306,104 1293,101 1280,106\" fill=\"{MC}\"/><polygon points=\"1337,152 1432,86 1527,152\" fill=\"{MT}\"/><polygon points=\"1405,104 1432,86 1459,104 1442,101 1424,106\" fill=\"{MC}\"/><polygon points=\"1473,152 1545,97 1617,152\" fill=\"{MT}\"/><polygon points=\"1525,112 1545,97 1565,112 1552,109 1539,114\" fill=\"{MC}\"/><polygon points=\"1602,152 1690,100 1778,152\" fill=\"{MT}\"/><polygon points=\"1665,115 1690,100 1715,115 1699,111 1683,116\" fill=\"{MC}\"/><polygon points=\"1722,152 1826,100 1930,152\" fill=\"{MT}\"/><polygon points=\"1797,115 1826,100 1855,115 1836,111 1818,116\" fill=\"{MC}\"/><polygon points=\"1854,152 1943,86 2032,152\" fill=\"{MT}\"/><polygon points=\"1918,104 1943,86 1968,104 1952,101 1936,106\" fill=\"{MC}\"/><path d=\"M0 150 Q100 112 200 140 Q300 128 400 140 Q500 112 600 140 Q700 128 800 140 Q900 112 1000 140 Q1100 128 1200 140 Q1300 112 1400 140 Q1500 128 1600 140 Q1700 112 1800 140 Q1900 128 2000 140 V250 H0Z\" fill=\"{HL}\"/><polygon points=\"20,105 32,139 8,139\" fill=\"{FT}\"/><polygon points=\"80,105 94,144 66,144\" fill=\"{FT}\"/><polygon points=\"140,91 156,136 124,136\" fill=\"{FT}\"/><polygon points=\"200,99 215,143 185,143\" fill=\"{FT}\"/><polygon points=\"260,97 276,142 244,142\" fill=\"{FT}\"/><polygon points=\"320,96 336,143 304,143\" fill=\"{FT}\"/><polygon points=\"380,100 395,143 365,143\" fill=\"{FT}\"/><polygon points=\"440,100 454,139 426,139\" fill=\"{FT}\"/><polygon points=\"500,92 516,139 484,139\" fill=\"{FT}\"/><polygon points=\"560,106 572,140 548,140\" fill=\"{FT}\"/><polygon points=\"620,99 635,141 605,141\" fill=\"{FT}\"/><polygon points=\"680,94 696,140 664,140\" fill=\"{FT}\"/><polygon points=\"740,94 755,137 725,137\" fill=\"{FT}\"/><polygon points=\"920,108 932,143 908,143\" fill=\"{FT}\"/><polygon points=\"1040,110 1052,144 1028,144\" fill=\"{FT}\"/><polygon points=\"1160,103 1173,141 1147,141\" fill=\"{FT}\"/><polygon points=\"1220,100 1235,143 1205,143\" fill=\"{FT}\"/><polygon points=\"1280,104 1292,137 1268,137\" fill=\"{FT}\"/><polygon points=\"1340,93 1357,143 1323,143\" fill=\"{FT}\"/><polygon points=\"1400,92 1416,137 1384,137\" fill=\"{FT}\"/><polygon points=\"1460,107 1472,140 1448,140\" fill=\"{FT}\"/><polygon points=\"1520,99 1535,143 1505,143\" fill=\"{FT}\"/><polygon points=\"1580,105 1593,142 1567,142\" fill=\"{FT}\"/><polygon points=\"1640,92 1657,141 1623,141\" fill=\"{FT}\"/><polygon points=\"1700,110 1711,143 1689,143\" fill=\"{FT}\"/><polygon points=\"1760,98 1773,137 1747,137\" fill=\"{FT}\"/><polygon points=\"1820,98 1834,139 1806,139\" fill=\"{FT}\"/><polygon points=\"1880,92 1896,138 1864,138\" fill=\"{FT}\"/><polygon points=\"1940,96 1956,142 1924,142\" fill=\"{FT}\"/><path d=\"M0 182 Q120 160 240 178 Q360 174 480 178 Q600 160 720 178 Q840 174 960 178 Q1080 160 1200 178 Q1320 174 1440 178 Q1560 160 1680 178 Q1800 174 1920 178 Q2040 160 2160 178 V250 H0Z\" fill=\"{GM}\"/><use href=\"#pn\" transform=\"translate(30,198) scale(0.71) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(150,198) scale(0.62) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(188,200) scale(0.52) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(277,198) scale(0.88) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(422,198) scale(0.83) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(580,198) scale(0.93) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(618,200) scale(0.49) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(719,198) scale(0.81) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(757,200) scale(0.66) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(1235,198) scale(0.66) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(1273,200) scale(0.55) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(1392,198) scale(0.79) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(1430,200) scale(0.48) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(1567,198) scale(0.93) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(1683,198) scale(0.73) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(1864,198) scale(0.71) translate(-40,-198)\"/><use href=\"#pn\" transform=\"translate(1902,200) scale(0.48) translate(-40,-198)\"/><g transform=\"translate(805,0)\"><use href=\"#pn\"/><rect x=\"118\" y=\"140\" width=\"80\" height=\"52\" fill=\"#7A4A2E\"/><g stroke=\"#5E3720\" stroke-width=\"1.5\"><line x1=\"118\" y1=\"153\" x2=\"198\" y2=\"153\"/><line x1=\"118\" y1=\"166\" x2=\"198\" y2=\"166\"/><line x1=\"118\" y1=\"179\" x2=\"198\" y2=\"179\"/></g><rect x=\"180\" y=\"110\" width=\"11\" height=\"22\" fill=\"#5E3720\"/><rect x=\"178\" y=\"106\" width=\"15\" height=\"6\" rx=\"3\" fill=\"{RS}\"/><polygon points=\"110,143 158,108 206,143\" fill=\"#5E3720\"/><path d=\"M104 145 L158 103 L212 145 L207 150 L158 113 L109 150Z\" fill=\"{RS}\"/><rect x=\"129\" y=\"152\" width=\"22\" height=\"17\" fill=\"#F4C46A\" stroke=\"#5E3720\" stroke-width=\"2\"/><line x1=\"140\" y1=\"152\" x2=\"140\" y2=\"169\" stroke=\"#5E3720\" stroke-width=\"2\"/><rect x=\"164\" y=\"158\" width=\"20\" height=\"34\" rx=\"2\" fill=\"#4A2A18\"/><circle cx=\"179\" cy=\"176\" r=\"1.6\" fill=\"#F4C46A\"/><circle cx=\"230\" cy=\"117\" r=\"24\" fill=\"#F4C46A\" opacity=\".28\"/><line x1=\"230\" y1=\"124\" x2=\"230\" y2=\"196\" stroke=\"#2A3242\" stroke-width=\"3\"/><rect x=\"223\" y=\"108\" width=\"14\" height=\"16\" rx=\"2\" fill=\"#F4C46A\" stroke=\"#2A3242\" stroke-width=\"2\"/><rect x=\"221\" y=\"104\" width=\"18\" height=\"5\" rx=\"2.5\" fill=\"{RS}\"/><ellipse cx=\"290\" cy=\"207\" rx=\"29\" ry=\"3.5\" fill=\"{SH}\" opacity=\".75\"/><ellipse cx=\"362\" cy=\"207\" rx=\"20\" ry=\"3.5\" fill=\"{SH}\" opacity=\".75\"/><!--FIG--></g><path d=\"M0 204 Q100 194 200 204 Q300 210 400 204 Q500 194 600 204 Q700 210 800 204 Q900 194 1000 204 Q1100 210 1200 204 Q1300 194 1400 204 Q1500 210 1600 204 Q1700 194 1800 204 Q1900 210 2000 204 V250 H0Z\" fill=\"{GF}\"/></svg>";
 const SPAL={"winter": {"GF": "#FFFFFF", "GM": "#F7FAFD", "HL": "#DCE5EF", "FT": "#9DB3C2", "MT": "#B9CAD8", "MC": "#FFFFFF", "PN": "#2F5D50", "PC": "#FFFFFF", "RS": "#FFFFFF", "SH": "#C9D6E4"}, "xmas": {"GF": "#FFFFFF", "GM": "#F7FAFD", "HL": "#DCE5EF", "FT": "#9DB3C2", "MT": "#B9CAD8", "MC": "#FFFFFF", "PN": "#2F5D50", "PC": "#FFFFFF", "RS": "#FFFFFF", "SH": "#C9D6E4"}, "spring": {"GF": "#B9DB8F", "GM": "#CDE6A8", "HL": "#DCEBC6", "FT": "#9FC08A", "MT": "#B7C9B0", "MC": "#F4F7F0", "PN": "#3F7A4A", "PC": "#3F7A4A", "RS": "#5E3720", "SH": "#9FC27A"}, "summer": {"GF": "#C9DB7A", "GM": "#D8E6A0", "HL": "#E6EDC4", "FT": "#A8C080", "MT": "#C3CCB0", "MC": "#EEF0E4", "PN": "#3F7A4A", "PC": "#3F7A4A", "RS": "#5E3720", "SH": "#AFC26A"}, "autumn": {"GF": "#4A5A3C", "GM": "#3F4F35", "HL": "#34452F", "FT": "#5A6E4E", "MT": "#44574A", "MC": "#6B7F68", "PN": "#C96F3B", "PC": "#C96F3B", "RS": "#5E3720", "SH": "#2B3A2F"}, "halloween": {"GF": "#3A2E4A", "GM": "#33283F", "HL": "#2E2438", "FT": "#4A3A5C", "MT": "#3F3150", "MC": "#5A4A6C", "PN": "#1F1A28", "PC": "#1F1A28", "RS": "#3A2A20", "SH": "#241C2E"}, "off": {"GF": "#E8E8E4", "GM": "#EFEFEC", "HL": "#E4E4E0", "FT": "#C9CCC6", "MT": "#D4D6D2", "MC": "#F2F2F0", "PN": "#5E7A66", "PC": "#5E7A66", "RS": "#5E3720", "SH": "#D6D6D2"}};
 Object.assign(I,{gplay:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/>',gnote:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',gtrash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',gfilter:'<path d="M3 5h18l-7 8v6l-4-2v-4z"/>'});
@@ -232,7 +265,8 @@ const M={
  haushalt:['Jurassic Flat','Haushalt','broom',['Aufgaben mit Serien und Intervallen','Status und Punkte pro Person','Tausch-Angebote']],
  rezepte:['Jurassic Food','Rezepte und Einkauf','pot2',['Lieblingsrezepte mit Zutaten','Drei bis fünf Rezepte pro Woche wählen','Vorhandene Zutaten abhaken','Einkaufsliste nach Kategorien']],
  reisen:['Jurassic Travel','Reisen und Freitickets','case',['Reisen anlegen mit Planungs-To-dos','Gebuchte Zugtickets und Hotels','Bahn-Freitickets pro Person und Jahr']],
- spiele:['Jurassic Games','Brettspiele','meeple',['Spielesammlung gemeinsam verwalten']]};
+ spiele:['Jurassic Games','Brettspiele','meeple',['Spielesammlung gemeinsam verwalten']],
+ termine:['Jurassic Dates','Gemeinsamer Kalender','cal',['Termine und Events für beide']]};
 let note='<p class="sub">Entwurf: Die Daten bleiben vorerst nur auf diesem Gerät. Firebase und der echte Login kommen im nächsten Schritt.</p>';
 
 function picker(){return `<div class="wrap"><h1>Jurassic Wood App</h1><p class="sub">Wer bist du?</p><div class="pick">${Object.keys(P).map(k=>`<button data-u="${k}">${av(k,48)}<span><b>${P[k].n}</b><br><small class="sub">${P[k].r}</small></span></button>`).join('')}</div>${note}</div>`}
@@ -245,7 +279,7 @@ function settings(){const u=S.user;return `<div class="wrap"><a class="back" hre
 <section class="card"><div class="row">${av(u,52)}<div><b>${P[u].n}</b><div class="sub">${P[u].r}</div></div><button class="btn ghost" id="sw">Wechseln</button></div></section>
 <section class="card"><h2>Saison-Dekoration</h2><p class="sub">„Automatisch“ wählt das Design nach dem Datum. Eine feste Auswahl gilt das ganze Jahr, bis du wieder auf „Automatisch“ stellst.</p><div class="sg" role="radiogroup" aria-label="Saison-Dekoration">${Object.keys(SE).map(k=>`<label class="so"><input type="radio" name="se" value="${k}"${(SE[S.season]?S.season:'auto')===k?' checked':''}><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">${SIC[k]}</svg><span><b>${SE[k]}</b><small>${k==='auto'?'je nach Jahreszeit':k==='off'?'Standard-Design':SEA[k].r}</small></span></label>`).join('')}</div><p class="sub" id="seh"></p><label class="chk"><input type="checkbox" id="an"${S.anim?' checked':''}> Animationen anzeigen</label></section>
 <section class="card"><h2>Bahn-Freitickets</h2><label for="ft">Freitickets pro Jahr (${P[u].n})</label><input id="ft" type="number" min="0" inputmode="numeric" value="${Number(S.tickets[u])||''}"><p class="sub">Fabi und Gigi haben jeweils ein eigenes Kontingent.</p></section>${FBH.st==='in'?`<section class="card"><h2>Konto</h2><p class="sub">Angemeldet als ${esc(FBH.email)}.</p><button class="btn ghost" id="lo">Abmelden</button></section>`:''}${note}</div>`}
-function nav(h){const it=[['start','Start'],['haushalt','Haushalt'],['rezepte','Rezepte'],['reisen','Reisen'],['spiele','Spiele'],['einstellungen','Profil']],ks=it.map(i=>i[0]);
+function nav(h){const it=[['start','Start'],['haushalt','Haushalt'],['rezepte','Rezepte'],['reisen','Reisen'],['spiele','Spiele'],['termine','Termine'],['einstellungen','Profil']],ks=it.map(i=>i[0]);
  return `<nav class="nav" aria-label="Hauptmenü">${it.map(([k,t])=>`<a href="#${k}"${(h===k||(k==='start'&&!ks.includes(h)))?' aria-current="page"':''}>${t}</a>`).join('')}</nav>`}
 
 /* ---- Rezepte und Einkauf ---- */
@@ -558,6 +592,95 @@ function bindG(h){
    const rec={id:a0?a0.id:uid(),name,type:g('at').value,url,img,games:$$('[data-ag]').filter(c=>c.checked).map(c=>c.dataset.ag)},old=GD.amb;GD.amb=a0?old.map(z=>z.id===rec.id?rec:z):[rec,...old];if(!saveG()){GD.amb=old;return ms('Der Speicher ist voll. Wähle ein kleineres Bild.')}location.hash='g-amb'}}
 }
 
+/* ---- Jurassic Dates: gemeinsamer Kalender ---- */
+const isD=h=>h==='termine'||/^d-/.test(h);
+const DCAT0=[{id:'fabi',n:'Fabi',c:'#7FA36B'},{id:'gigi',n:'Gigi',c:'#D98C5F'},{id:'beide',n:'Beide',c:'#4A90D9'},{id:'geb',n:'Geburtstage',c:'#C9518A'}];
+const EV=()=>S.events=S.events||[],DCT=()=>S.dcats=S.dcats||DCAT0.map(x=>({...x}));
+const dcOf=id=>DCT().find(c=>c.id===id)||DCT().find(c=>c.id==='beide')||DCT()[0]||{id:'',n:'Ohne',c:'#8A8A8A'};
+const WDL=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'],WDS=['Mo','Di','Mi','Do','Fr','Sa','So'];
+let DV='month',DSEL=null,DHID=[],DE=null,DNEW='';
+const dSel=()=>DSEL||dstr(new Date());
+const pd=s=>new Date(s+'T12:00:00');
+const leap=y=>(y%4===0&&y%100!==0)||y%400===0;
+/* Kommt der Termin an diesem Tag vor? Jährliche Termine (z. B. Geburtstage) wiederholen sich automatisch. */
+function evOn(e,ds){
+ if(!e.date||ds<e.date&&!e.yearly)return false;
+ if(e.yearly){const y=+ds.slice(0,4);if(y<+e.date.slice(0,4))return false;let md=e.date.slice(5);if(md==='02-29'&&!leap(y))md='02-28';return ds.slice(5)===md}
+ return ds>=e.date&&ds<=(e.end&&e.end>e.date?e.end:e.date)}
+const evSort=(a,b)=>(a.allDay?'':a.time||'99')<(b.allDay?'':b.time||'99')?-1:(a.allDay?'':a.time||'99')>(b.allDay?'':b.time||'99')?1:a.title.localeCompare(b.title,'de');
+const evDay=ds=>EV().filter(e=>!DHID.includes(e.cat)&&evOn(e,ds)).sort(evSort);
+const evTime=e=>e.allDay||!e.time?'Ganztägig':e.time+(e.timeEnd?' – '+e.timeEnd:'')+' Uhr';
+function evAge(e,ds){if(e.cat!=='geb'||!e.yearly||!e.withYear)return'';const a=+ds.slice(0,4)-+e.date.slice(0,4);return a>0?` (${a})`:''}
+function evRow(e,ds){const c=dcOf(e.cat),multi=!e.yearly&&e.end&&e.end>e.date;
+ return `<button class="ev" data-ev="${e.id}"><span class="evb" style="background:${c.c}"></span><span class="evt"><b>${esc(e.title)}${evAge(e,ds)}</b><small>${evTime(e)} · ${esc(c.n)}${multi?' · bis '+dde(e.end):''}${e.yearly&&e.cat!=='geb'?' · jährlich':''}</small>${e.note?`<small class="evn">${esc(e.note)}</small>`:''}</span></button>`}
+function upcoming(n){const out=[],t=new Date();for(let i=0;i<400&&out.length<n;i++){const ds=dstr(addD(t,i));evDay(ds).forEach(e=>{if(out.length<n&&!out.some(o=>o.e.id===e.id))out.push({e,ds})})}return out}
+const dLong=ds=>pd(ds).toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
+function dHead(){const sel=dSel(),d=pd(sel);
+ const filt=`<div class="dfl">${DCT().map(c=>`<button class="dfc" data-dh="${c.id}" aria-pressed="${!DHID.includes(c.id)}"><i style="background:${c.c}"></i>${esc(c.n)}</button>`).join('')}</div>`;
+ const vt=`<div class="vt" role="tablist" style="grid-template-columns:repeat(2,minmax(0,1fr))">${[['month','Monat'],['week','Woche']].map(([k,t])=>`<button role="tab" data-dv="${k}" aria-selected="${DV===k}">${t}</button>`).join('')}</div>`;
+ const lbl=DV==='month'?`<b>${MN[d.getMonth()]}</b><span>${d.getFullYear()}</span>`:(()=>{const ws=monOf(d),we=addD(ws,6);return `<b>KW ${isoW(d)}</b><span>${fmt(ws)} – ${fmt(we)}${we.getFullYear()}</span>`})();
+ return `<div class="wrap hl"><div class="gh"><a class="gb" href="#start" aria-label="Zurück zum Start">${svg('gback',26)}</a><h1>Jurassic Dates</h1><button class="gp" data-dadd="${sel}" aria-label="Neuer Termin">+</button></div>${vt}
+ <div class="wk"><button data-dm="-1" aria-label="Zurück">‹</button><div>${lbl}</div><button data-dm="1" aria-label="Vor">›</button></div>${filt}`}
+function monthV(){const sel=dSel(),d=pd(sel),y=d.getFullYear(),m=d.getMonth(),first=new Date(y,m,1),start=monOf(first),td=dstr(new Date());let cells='';
+ for(let i=0;i<42;i++){const x=addD(start,i);if(i>=35&&x.getMonth()!==m)break;const ds=dstr(x),l=evDay(ds),out=x.getMonth()!==m;
+  cells+=`<button class="mc${out?' out':''}${ds===td?' td':''}" data-ds="${ds}"${ds===sel?' aria-current="date"':''} aria-label="${dLong(ds)}, ${l.length} Termine"><b>${x.getDate()}</b><span class="mdots">${l.slice(0,3).map(e=>`<i style="background:${dcOf(e.cat).c}"></i>`).join('')}${l.length>3?'<em>+</em>':''}</span></button>`}
+ const l=evDay(sel),up=l.length?'':upcoming(5);
+ return `<div class="mg7">${WDS.map(w=>`<span>${w}</span>`).join('')}${cells}</div>
+ <div class="dday"><h2>${sel===td?'Heute, ':''}${dLong(sel)}</h2>${l.length?l.map(e=>evRow(e,sel)).join(''):`<p class="sub">Keine Termine an diesem Tag.</p><button class="btn ghost" data-dadd="${sel}" style="width:100%">+ Termin an diesem Tag</button>`}
+ ${up&&up.length?`<h2 class="cat">Als Nächstes</h2>${up.map(o=>`<div class="dnx">${pd(o.ds).toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'})}</div>${evRow(o.e,o.ds)}`).join('')}`:''}</div>`}
+function weekV(){const ws=monOf(pd(dSel())),td=dstr(new Date());
+ return Array.from({length:7},(_,i)=>{const x=addD(ws,i),ds=dstr(x),l=evDay(ds);
+  return `<div class="wd${ds===td?' td':''}"><div class="wdh"><b>${WDL[i]}</b><span>${fmt(x)}</span><button class="wda" data-dadd="${ds}" aria-label="Termin am ${dLong(ds)} anlegen">+</button></div>${l.length?l.map(e=>evRow(e,ds)).join(''):'<p class="sub wde">Frei</p>'}</div>`}).join('')}
+function dForm(h){const e=h==='d-edit'?EV().find(x=>x.id===DE):null,n=!e,v=e||{title:'',cat:S.user==='gigi'?'gigi':'fabi',date:DNEW||dSel(),end:'',allDay:false,time:'',timeEnd:'',yearly:false,withYear:false,note:''};
+ return `<div class="wrap"><a class="back" href="#termine">← Abbrechen</a><h1>${n?'Neuer Termin':'Termin bearbeiten'}</h1>
+ <section class="card"><label for="dt">Titel</label><input id="dt" type="text" value="${esc(v.title)}" placeholder="z. B. Zahnarzt, Kino, Omas Geburtstag">
+ <label>Kategorie</label><div class="dcs" role="radiogroup">${DCT().map(c=>`<label class="dcc"><input type="radio" name="dcat" value="${c.id}"${v.cat===c.id?' checked':''}><i style="background:${c.c}"></i>${esc(c.n)}</label>`).join('')}</div>
+ <label for="dd">${v.cat==='geb'?'Geburtstag':'Datum'}</label><input id="dd" type="date" value="${v.date}">
+ <label class="chk dchk"><input type="checkbox" id="dal"${v.allDay?' checked':''}><span>Ganztägig</span></label>
+ <div class="grid" id="dtm"${v.allDay?' hidden':''}><div><label for="dtf">Von</label><input id="dtf" type="time" value="${v.time||''}"></div><div><label for="dtt">Bis</label><input id="dtt" type="time" value="${v.timeEnd||''}"></div></div>
+ <div id="dmulti"${v.yearly?' hidden':''}><label for="de">Bis Datum (nur bei mehrtägigen Terminen)</label><input id="de" type="date" value="${v.end||''}"></div>
+ <label class="chk dchk"><input type="checkbox" id="dy"${v.yearly?' checked':''}><span>Jedes Jahr wiederholen</span></label>
+ <label class="chk dchk" id="dwy"${v.cat==='geb'?'':' hidden'}><input type="checkbox" id="dwyc"${v.withYear?' checked':''}><span>Datum enthält das Geburtsjahr (Alter anzeigen)</span></label>
+ <label for="dn">Notiz</label><textarea id="dn" rows="3">${esc(v.note||'')}</textarea></section>
+ <p class="sub" id="dmsg" role="status"></p><button class="btn" id="dsv" style="width:100%">Speichern</button>
+ ${n?'':`<button class="btn ghost" id="ddel" style="width:100%;margin-top:10px">Termin löschen</button>`}
+ <p class="sub" style="margin-top:16px">Angelegt ${e&&e.by?'von '+P[e.by].n:'von '+P[S.user].n}.</p></div>`}
+function dCats(){return `<div class="wrap"><a class="back" href="#termine">← Jurassic Dates</a><h1>Kategorien</h1><p class="sub">Farbe antippen zum Ändern. Termine einer gelöschten Kategorie landen bei „Beide“.</p>
+ <section class="card">${DCT().map(c=>`<div class="dkr"><input type="color" value="${c.c}" data-kc="${c.id}" aria-label="Farbe ${esc(c.n)}"><input type="text" value="${esc(c.n)}" data-kn="${c.id}" aria-label="Name"><button class="x" data-kd="${c.id}" aria-label="${esc(c.n)} löschen"${['beide','geb'].includes(c.id)?' disabled style="visibility:hidden"':''}>×</button></div>`).join('')}</section>
+ <section class="card"><h2>Neue Kategorie</h2><div class="dkr"><input type="color" id="knc" value="#8E5BB5" aria-label="Farbe"><input type="text" id="knn" placeholder="z. B. Arbeit, Urlaub"></div><button class="btn" id="kna" style="width:100%;margin-top:10px">Hinzufügen</button></section></div>`}
+function dat(h){
+ if(h==='d-neu'||h==='d-edit')return dForm(h);
+ if(h==='d-kat')return dCats();
+ return dHead()+(DV==='month'?monthV():weekV())+`<a class="hr" href="#d-kat"><span>Kategorien verwalten</span><em>${DCT().length}</em></a></div>`}
+function bindD(h){
+ const go=x=>{location.hash=x};
+ $$('[data-dv]').forEach(b=>b.onclick=()=>{DV=b.dataset.dv;render()});
+ $$('[data-dm]').forEach(b=>b.onclick=()=>{const d=pd(dSel()),s=+b.dataset.dm;if(DV==='month'){const n=new Date(d.getFullYear(),d.getMonth()+s,1);DSEL=dstr(n)}else DSEL=dstr(addD(d,7*s));render()});
+ $$('[data-ds]').forEach(b=>b.onclick=()=>{DSEL=b.dataset.ds;render()});
+ $$('[data-dh]').forEach(b=>b.onclick=()=>{const k=b.dataset.dh;DHID=DHID.includes(k)?DHID.filter(x=>x!==k):[...DHID,k];render()});
+ $$('[data-ev]').forEach(b=>b.onclick=()=>{DE=b.dataset.ev;DNEW='';go('d-edit')});
+ $$('[data-dadd]').forEach(b=>b.onclick=()=>{DE=null;DNEW=b.dataset.dadd;go('d-neu')});
+ if(g('dsv')){
+  const syncU=()=>{const c=(document.querySelector('[name=dcat]:checked')||{}).value;g('dwy').hidden=c!=='geb';g('dmulti').hidden=g('dy').checked};
+  $$('[name=dcat]').forEach(r=>r.onchange=()=>{if(r.value==='geb'){g('dy').checked=true;g('dal').checked=true;g('dtm').hidden=true}syncU()});
+  g('dal').onchange=e=>{g('dtm').hidden=e.target.checked};
+  g('dy').onchange=syncU;
+  g('dsv').onclick=()=>{const t=g('dt').value.trim(),date=g('dd').value,ms=x=>g('dmsg').textContent=x;
+   if(!t){ms('Bitte gib einen Titel ein.');g('dt').focus();return}
+   if(!date){ms('Bitte wähle ein Datum.');return}
+   const yearly=g('dy').checked,end=yearly?'':g('de').value,allDay=g('dal').checked;
+   if(end&&end<date){ms('Das Enddatum liegt vor dem Startdatum.');return}
+   const v={title:t,cat:(document.querySelector('[name=dcat]:checked')||{}).value||'beide',date,end:end&&end>date?end:'',allDay,time:allDay?'':g('dtf').value,timeEnd:allDay?'':g('dtt').value,yearly,withYear:g('dwyc').checked,note:g('dn').value.trim()};
+   const e=h==='d-edit'?EV().find(x=>x.id===DE):null;if(e)Object.assign(e,v);else EV().push({id:uid(),by:S.user,created:Date.now(),...v});
+   DSEL=date;DE=null;DNEW='';save();go('termine')};
+  if(g('ddel'))two('ddel','Wirklich löschen?',()=>{S.events=EV().filter(x=>x.id!==DE);DE=null;save();go('termine')});
+ }
+ $$('[data-kc]').forEach(i=>i.onchange=()=>{dcOf(i.dataset.kc).c=i.value;save()});
+ $$('[data-kn]').forEach(i=>i.onchange=()=>{const v=i.value.trim();if(v){dcOf(i.dataset.kn).n=v;save()}});
+ conf('[data-kd]','?',b=>{const id=b.dataset.kd;EV().forEach(e=>{if(e.cat===id)e.cat='beide'});S.dcats=DCT().filter(c=>c.id!==id);DHID=DHID.filter(x=>x!==id);save();render()});
+ if(g('kna'))g('kna').onclick=()=>{const n=g('knn').value.trim();if(!n){g('knn').focus();return}DCT().push({id:uid(),n,c:g('knc').value});save();render()};
+}
+
 /* ---- Anmeldung und Synchronisation (Firebase) ---- */
 function authMsg(c){return({'auth/invalid-credential':'E-Mail oder Passwort stimmt nicht.','auth/wrong-password':'E-Mail oder Passwort stimmt nicht.','auth/user-not-found':'E-Mail oder Passwort stimmt nicht.','auth/invalid-email':'Die E-Mail-Adresse ist ungültig.','auth/too-many-requests':'Zu viele Versuche. Bitte warte kurz und versuche es erneut.','auth/network-request-failed':'Keine Verbindung. Prüfe dein Internet.','auth/operation-not-allowed':'E-Mail/Passwort ist in Firebase noch nicht aktiviert.','auth/unauthorized-domain':'Diese Adresse ist in Firebase noch nicht als autorisierte Domain eingetragen.'})[c]||'Anmeldung fehlgeschlagen'+(c?' ('+c+')':'')+'.'}
 function gateV(){
@@ -580,8 +703,8 @@ function hint(){const e=g('seh');if(e)e.innerHTML='Aktuell wirksam: <b>'+SE[cur(
 function render(){const h=location.hash.slice(1)||'start';document.documentElement.dataset.season=cur();if(!$('#deco').firstChild)deco();
  if(FBH.st!=='in'&&FBH.st!=='offline'){$('#app').innerHTML=gateV();bindGate();return}
  note=FBH.st==='offline'?'<p class="sub">Offline-Modus: '+esc(FBH.why||'Firebase ist nicht erreichbar.')+' Die Daten bleiben nur auf diesem Gerät.</p>':FBH.warn?'<p class="sub" role="alert">'+esc(FBH.warn)+'</p>':'';
- const v=!S.user?picker():isR(h)?rez(h):isH(h)?hau(h):isV(h)?rei(h):isG(h)?spi(h):M[h]?module(h):h==='einstellungen'?settings():home();
- $('#app').innerHTML=v+(S.user?nav(isR(h)?'rezepte':isH(h)?'haushalt':isV(h)?'reisen':isG(h)?'spiele':h):'');if(S.user&&isR(h))bindR(h);if(S.user&&isH(h))bindH();if(S.user&&isV(h))bindV(h);if(S.user&&isG(h))bindG(h);
+ const v=!S.user?picker():isR(h)?rez(h):isH(h)?hau(h):isV(h)?rei(h):isG(h)?spi(h):isD(h)?dat(h):M[h]?module(h):h==='einstellungen'?settings():home();
+ $('#app').innerHTML=v+(S.user?nav(isR(h)?'rezepte':isH(h)?'haushalt':isV(h)?'reisen':isG(h)?'spiele':isD(h)?'termine':h):'');if(S.user&&isR(h))bindR(h);if(S.user&&isH(h))bindH();if(S.user&&isV(h))bindV(h);if(S.user&&isG(h))bindG(h);if(S.user&&isD(h))bindD(h);
  document.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{S.user=b.dataset.u;save();location.hash='start';render()});
  if(g('sw'))g('sw').onclick=()=>{S.user=null;save();render()};
  if(g('lo'))g('lo').onclick=()=>FBH.logout();
